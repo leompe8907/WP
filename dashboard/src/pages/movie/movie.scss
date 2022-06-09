@@ -1,0 +1,110 @@
+.movie{
+    flex: 4;
+    padding: 20px;
+}
+.movieTitleContainer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.movieAddButoon{
+    width: 80px;
+    border: none;
+    padding: 5px;
+    background-color: teal;
+    color: whitesmoke;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.movieTop{
+display: flex;
+ img{
+     width: 40px;
+     height: 40px;
+     border-radius: 50%;
+     object-fit: cover;
+     margin-right: 20px;
+ }
+}
+.movieTopLeft,.movieTopRight{
+    flex: 1;
+}
+.movieTopRight{
+    padding: 20px;
+    margin: 20px;
+    -webkit-box-shadow: 0px 0px 15px -10px rgba(0,0,0,.75); 
+    box-shadow: 0px 0px 15px -10px rgba(0,0,0,.75);
+}
+.movieInfoTop{
+    display: flex;
+    align-items: center;
+}
+.movieName{
+    font-weight: 600;
+}
+.movieBottom{
+    margin-top: 10px;
+}
+.moiveInfoItem{
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.MovieInfoValue{
+    color: rgb(56, 55, 55);
+}
+.movieBottom{
+    padding: 20px;
+    margin: 20px;
+    -webkit-box-shadow: 0px 0px 15px -10px rgba(0,0,0,.75); 
+    box-shadow: 0px 0px 15px -10px rgba(0,0,0,.75);
+}
+.MovieForm{
+    display: flex;
+    justify-content: space-between;
+}
+.movieFormLeft{
+    display: flex;
+    flex-direction: column;
+    label{
+        margin-bottom: 10px;
+        color: grey;
+    }
+    input{
+        margin-bottom: 10px;
+        border: none;
+        padding: 5px;
+        border-bottom: 1px solid gray;
+    }
+    select{
+        padding: 10px;
+    }
+}
+.movieFormRigth{
+    img{
+        width: 100px;
+        height: 100px;
+        border-radius: 10px;
+        margin-right: 20px;
+        object-fit: cover;
+    }
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+.movieUpload{
+    display: flex;
+    align-items: center;
+}
+.movieButton{
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: darkblue;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}

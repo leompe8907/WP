@@ -1,0 +1,30 @@
+.movieList{
+    flex: 4;
+}
+
+.movieListName{
+    display: flex;
+    align-items: center;
+    img{
+        height: 32px;
+        width: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+    }
+}
+
+.movieListEditButton{
+    border: none;
+    border-radius: 10px;
+    padding: 5px 10px;
+    background-color: rgb(101, 255, 108);
+    cursor: pointer;
+    color: black;
+}
+
+.deleteMovieActionButton{
+    color: red;
+    margin-left: 15px;
+    cursor: pointer;
+}
