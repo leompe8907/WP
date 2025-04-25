@@ -148,12 +148,61 @@ VOD = (function (Events) {
       }
     },
 
+    // regreso a home
+    goToHome: function () {
+      this.hide();
+      Focus.to(this.homeObject.$el);
+    },
+
+    goToEPG: function () {
+      this.hide();
+      Focus.to(this.epgObject.$el);
+    },
+
+    logOut: function () {
+      this.hide();
+      this.homeObject.clearData();
+      Router.clearHistory();
+      cv.logout();
+      Router.go('login');
+    },
+
     onEnter: function ($el, callbackForPlay) {
-      var id = $el.data("id");
-      this.homeObject.currentVodCategoryId = $el.data("category-id");
-      this.homeObject.$lastFocused = Focus.focused;
-      VODDetail.show(id, this.currentVodCategoryId, this.homeObject);
+      // var id = $el.data("id");
+      // this.homeObject.currentVodCategoryId = $el.data("category-id");
+      // this.homeObject.$lastFocused = Focus.focused;
+      // VODDetail.show(id, this.currentVodCategoryId, this.homeObject);
       //Router.go('voddetail', id, this.homeObject.currentVodCategoryId, this.homeObject);
+
+      // Al entrar al boton de home regresa a home
+      if ($el.is("#start")) {
+        this.goToHome();
+        return;
+      }
+
+      // Al entrar al boton de buscar muestra el dialogo del buscador
+      if ($el.is("#search")) {
+        this.homeObject.showSearchPanel();
+        return;
+      }
+
+      if ($el.is("#epg")) {
+        this.goToEPG();
+        return;
+      }
+
+      if ($el.is("#menuAboutLabel")) {
+        $("#softwareInfoModal").modal("show");
+        return;
+      }
+
+
+      // Al entrar al logout, saldra el modal de cerrar sesion
+      if ($el.is("#logout")) {
+        // Mostrar alerta de confirmación antes del logout
+        this.homeObject.$el.showAlertConfirm(__("LoginLogoutConfirm"), 'LoginLogoutConfirm', __("LoginLogoutButton"), __("LoginLogoutCancelButton"), 'cancel');
+        return; // Importante: evitamos ejecutar el logout de inmediato
+      }
 
 
       // AppData.getTopLevelVodM3u8Url(id, function(url) {

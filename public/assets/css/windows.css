@@ -103,6 +103,19 @@
     height: auto;
     background-color: #0000003d;
 }
+
+.navbar{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: nowrap;
+}
+
+.navbar .col-sm-8{
+  width: max-content;
+}
+
 .row-log
 {
     height: 250px;
@@ -253,30 +266,32 @@
 
 /* Contenedor del buscador */
 .search-panel {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  background-color: rgba(0, 0, 0, 0.9);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95);
   border-radius: 10px;
   padding: 20px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   z-index: 1000;
-  height: 98vh;
-  width: 98vw;
 }
 
 .search-left {
-  width: 25%; /* Ocupa el 30% del ancho total */
+  width: 90%;
   height: 100%;
-  background-color: #222;
+  background-color: #1a1a1a;
   padding: 20px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
+  overflow: auto;
 }
 
 /* Encabezado del buscador */
@@ -289,72 +304,50 @@
   display: flex;
   align-items: center;
   background-color: #333;
-  border-radius: 5px;
-  padding: 10px;
+  border-radius: 30px;
+  padding: 10px 15px;
   width: 100%;
 }
 
 .search-icon {
-  font-size: 16px;
+  font-size: 20px;
+  color: #888;
   margin-right: 10px;
 }
 
 .custom-input {
   flex-grow: 1;
-  font-size: 16px;
+  background: none;
+  border: none;
+  outline: none;
   color: white;
+  font-size: 18px;
+  padding: 10px;
+  border-bottom: solid 1px #888;
+  box-shadow: none;
+}
+
+.custom-input::placeholder {
+  color: #888;
 }
 
 .close-btn {
-  margin-left: 10px;
   background-color: #ff4c4c;
   color: white;
   border: none;
-  border-radius: 5px;
-  padding: 10px;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 20px;
+  margin-left: 10px;
 }
 
 .close-btn:hover {
   background-color: #ff1a1a;
-}
-
-/* Teclado virtual */
-.virtual-keyboard {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr); /* Teclado de 6 columnas */
-  gap: 10px;
-  width: 100%;
-}
-
-/* Teclas individuales */
-.key {
-  background-color: #444;
-  color: white;
-  text-align: center;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  /* transition: transform 0.2s ease; */
-}
-
-.key:hover, .key:focus {
-  background-color: #555;
-  border-color: #007bff;
-}
-
-.key.focus{
-  border: 0px none;
-  margin: 0;
-}
-
-/* Espacio y borrar */
-.key[data-key="space"], .key[data-key="clear"] {
-  grid-column: span 3; /* Ocupa dos columnas */
-  font-size: 14px;
-  font-weight: bold;
-  text-transform: uppercase;
 }
 
 /* Contenedor de resultados */
@@ -369,7 +362,7 @@
   background-color: #222;
   border-radius: 10px;
   box-sizing: border-box;
-  width: 85%; /* Ajustable según el diseño */
+  width: 95%; /* Ajustable según el diseño */
   height: 100%;
 }
 
@@ -385,10 +378,13 @@
   border-radius: 10px;
   cursor: pointer;
   text-align: center;
-  transition: 0.2s ease;
-  overflow: hidden;
-  aspect-ratio: 9 / 9;
-  height: min-content;
+  transition: 0.2s;
+  height: 12em;
+}
+
+.result-item:hover {
+  background-color: #444;
+  transform: scale(1.05);
 }
 
 .result-item img {
@@ -468,6 +464,7 @@
 }
 
 .nav-btn {
+  width: max-content;
   background-color: #007bff;
   border: none;
   padding: 10px 15px;

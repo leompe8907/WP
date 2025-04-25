@@ -220,7 +220,7 @@
     <div id="scene-home" class="scene" style="display: none">
       <div class="container-fluid">
         <div class="row header-row">
-          <div class="row">
+          <div class="row navbar">
             <div class="col-sm-2">
               <img src="" alt="" class="img-thumbnail img-logo" id="topLogoImage">
             </div>
@@ -326,7 +326,7 @@
           <div class="row publicidad-home-top"></div>
           <div class="row hidden" id="tvChannelsRow">
           </div>
-          <!--<div class="row publicidad-home-bottom"></div>-->
+          <div class="row publicidad-home-bottom"></div>
           <div class="row hidden" id="favoritesRow">
             <div class="col-sm-12 canales">
               <div class="channels-div">
@@ -446,6 +446,7 @@
       </div>
     </div>
   </div>
+
   <!-- Modal del Buscador -->
   <div id="searchContainer" class="search-panel hidden">
     <!-- Área de búsqueda y teclado -->
@@ -454,59 +455,12 @@
       <div class="search-header">
         <div class="search-input-container">
           <span class="search-icon">🔍</span>
-          <input id="customSearchInput" class="custom-input focusable"></input>
+          <input id="customSearchInput" class="custom-input focusable" type="text"/>
           <button id="closeSearchButton" class="close-btn focusable">×</button>
         </div>
       </div>
-
-      <!-- Teclado Virtual
-      <div class="virtual-keyboard">
-        <!-- Letras, números, espacio, y borrar
-        <div class="focusable key" data-key="a">a</div>
-        <div class="focusable key" data-key="b">b</div>
-        <div class="focusable key" data-key="c">c</div>
-        <div class="focusable key" data-key="d">d</div>
-        <div class="focusable key" data-key="e">e</div>
-        <div class="focusable key" data-key="f">f</div>
-        <div class="focusable key" data-key="g">g</div>
-        <div class="focusable key" data-key="h">h</div>
-        <div class="focusable key" data-key="i">i</div>
-        <div class="focusable key" data-key="j">j</div>
-        <div class="focusable key" data-key="k">k</div>
-        <div class="focusable key" data-key="l">l</div>
-        <div class="focusable key" data-key="m">m</div>
-        <div class="focusable key" data-key="n">n</div>
-        <div class="focusable key" data-key="o">o</div>
-        <div class="focusable key" data-key="p">p</div>
-        <div class="focusable key" data-key="q">q</div>
-        <div class="focusable key" data-key="r">r</div>
-        <div class="focusable key" data-key="s">s</div>
-        <div class="focusable key" data-key="t">t</div>
-        <div class="focusable key" data-key="u">u</div>
-        <div class="focusable key" data-key="v">v</div>
-        <div class="focusable key" data-key="w">w</div>
-        <div class="focusable key" data-key="x">x</div>
-        <div class="focusable key" data-key="y">y</div>
-        <div class="focusable key" data-key="z">z</div>
-        <div class="focusable key" data-key="0">0</div>
-        <div class="focusable key" data-key="1">1</div>
-        <div class="focusable key" data-key="2">2</div>
-        <div class="focusable key" data-key="3">3</div>
-        <div class="focusable key" data-key="4">4</div>
-        <div class="focusable key" data-key="5">5</div>
-        <div class="focusable key" data-key="6">6</div>
-        <div class="focusable key" data-key="7">7</div>
-        <div class="focusable key" data-key="8">8</div>
-        <div class="focusable key" data-key="9">9</div>
-        <div class="key" data-key="space"><i class="material-icons" style="color:white">space_bar</i></div>
-        <div class="key" data-key="clear"><i class="material-icons" style="color:white">backspace</i></i></div>
-
-      </div>-->
-    </div>
-
-    <!-- Resultados del buscador -->
-    <div id="searchResults" class="search-results">
-      <!-- Los resultados aparecerán aquí dinámicamente -->
+      <!-- Resultados del buscador -->
+      <div id="searchResults" class="search-results"></div>
     </div>
   </div>
 
@@ -515,7 +469,7 @@
     <div class="modal-dialog modal-lg" role="document" style="width: 90%;">
       <div class="modal-content" style="background-color: #000; color: #fff;">
         <div class="modal-header">
-          <h5 class="modal-title">Catchups</h5>
+          <h4 id ="menuCatchupModalLabel" class="modal-title"></h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
             <span aria-hidden="true">&times;</span>
           </button>

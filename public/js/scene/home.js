@@ -61,6 +61,7 @@ Scene_Home = (function (Scene) {
       this.$el.find("#menuSearch").html(__("MenuSearch"));
       this.$el.find("#menuExitLabel").html(__("MenuExit"));
       this.$el.find("#menuUpdateDataLabel").html(__("MenuUpdateData"));
+      this.$el.find("#menuCatchupModalLabel").html(__("MenuCatchups"));
       this.$el.find("#Home").html(__("MenuHome"));
       this.$el.find("#errorFind").html(__("ErrorFind"));
       this.$el.find("#customSearchInput").text(__("CustomSearch"))
@@ -721,64 +722,64 @@ Scene_Home = (function (Scene) {
     },
 
     initializeSearchEvents: function () {
-      if ($(".key").length === 0 || $("#closeSearchButton").length === 0) {
-        console.warn("Elementos del teclado virtual no encontrados");
-        return;
-      }
+      console.log("Inicializando eventos de búsqueda..."); // Esto debería aparecer en la consola
+
       var self = this;
-      var $input = $("#customSearchInput"); // Campo de búsqueda
+      var $input = $("#customSearchInput");
 
-      // Asegúrate de eliminar el texto "Buscar..." al hacer clic o comenzar a escribir
+      if ($input.length === 0) {
+          console.error("❌ No se encontró el input con ID #customSearchInput");
+          return;
+      } else {
+          console.log("✅ Input encontrado correctamente");
+      }
+
+      // Removemos cualquier evento anterior
+      $input.off("focus input blur");
+
+      // Evento al enfocar
       $input.on("focus", function () {
-        if ($input.text().trim() === __("CustomSearch")) {
-          $input.text(""); // Limpia el texto inicial traducido
-        }
+          console.log("📝 Input enfocado");
+          if ($input.val().trim() === "Buscar...") {
+              $input.val("");
+          }
       });
 
+      // Evento al escribir en el input
       $input.on("input", function () {
-        if ($input.text().trim() === __("CustomSearch")) {
-          $input.text(""); // Limpia el texto inicial si el usuario empieza a escribir
-        }
+          var query = $(this).val().trim();
+          console.log("🔍 Texto ingresado: ", query); // Debe mostrar el texto que escribes
+
+          if (query.length > 0) {
+              self.filterChannels(query); // Llama a la función de búsqueda
+          }
       });
 
+      // Evento al desenfocar
       $input.on("blur", function () {
-        if ($input.text().trim() === "") {
-          $input.text(__("CustomSearch")); // Restaura el texto traducido si está vacío
-        }
+          if ($input.val().trim() === "") {
+              $input.val("Buscar...");
+          }
       });
 
-      // Evento para manejar las teclas del teclado virtual
-      $(document).on("click", ".key", function () {
-        var key = $(this).data("key");
-        var currentText = $input.text();
-        if ($input.text().trim() === __("CustomSearch")) {
-          $input.text(""); // Limpia el placeholder traducido al hacer clic en cualquier tecla
-          currentText = ""; // Reinicia el texto
-        }
-        if (key === "space") {
-          $input.text(currentText + " ");
-        } else if (key === "clear") {
-          $input.text(currentText.slice(0, -1));
-        } else {
-          $input.text(currentText + key);
-        }
-        self.filterChannels($input.text());
-      });
-
-      // Evento para cerrar el buscador
-      $(document).on("click", "#closeSearchButton", function () {
-        self.hideSearchPanel();
-      });
-
-      // Evento para clics en resultados (del paso anterior)
-      $(document).on("click", ".result-item", function () {
+      // Forzar eventos click para los resultados (por si no pasan por onClick)
+      $(document).off("click.searchResult").on("click.searchResult", ".result-item", function (event) {
         var $el = $(this);
-        var id = $el.data("id");
-        var type = $el.data("type");
-        self.selectContent(id, type);
+        console.log("🖱️ Click detectado en resultado");
+        self.selectContent($el.data("id"), $el.data("type"));
         self.hideSearchPanel();
+        event.stopPropagation(); // evita que el evento se pierda
+      });
+
+      // Forzar click para el botón cerrar
+      $(document).off("click.closeSearch").on("click.closeSearch", "#closeSearchButton", function (event) {
+        console.log("🖱️ Click detectado en botón cerrar");
+        self.hideSearchPanel();
+        event.stopPropagation();
       });
     },
+
+
 
 
 
@@ -787,6 +788,10 @@ Scene_Home = (function (Scene) {
       var services = AppData.services; // Datos de canales
       var vods = AppData.allVods; // Datos de VOD
       var catchups = AppData.catchupGroups.length ? AppData.catchupGroups.map(function (group) { return group.events; }) : [];
+
+      console.log("Datos disponibles - services:", services);
+      console.log("Datos disponibles - vods:", vods);
+      console.log("Datos disponibles - catchups:", catchups);
 
       var results = [];
 
@@ -808,25 +813,27 @@ Scene_Home = (function (Scene) {
           return catchup.name.toLowerCase().indexOf(query) !== -1;
         }));
       }
-
-      console.log("Resultados de búsqueda en LG:", results); // Debugging
       this.renderSearchResults(results);
     },
 
     renderSearchResults: function (results) {
       var $resultsContainer = document.getElementById("searchResults");
-      $resultsContainer.innerHTML = ""; // Limpiar antes de agregar resultados
+      if (!$resultsContainer) {
+        console.error("Contenedor #searchResults no encontrado");
+        return;
+      }
+      $resultsContainer.innerHTML = "";
 
       if (results.length === 0) {
-        $resultsContainer.innerHTML = '<p id="errorFind"></p>';
+        $resultsContainer.innerHTML = '<p id="errorFind">' + __("ErrorFind") + '</p>';
         return;
       }
 
       for (var i = 0; i < results.length; i++) {
         var result = results[i];
         var type = result.catchupGroupId ? "catchup" : (result.categories ? "vod" : "service");
-        var logo = (type === "service") ? result.img : (type === "vod") ? result.posterListURL : result.imageUrl;
-        var name = result.name;
+        var logo = (type === "service") ? (result.img || "") : (type === "vod") ? (result.posterListURL || "") : (result.imageUrl || "");
+        var name = result.name || "Sin nombre";
 
         var div = document.createElement("div");
         div.className = "result-item focusable";
@@ -834,7 +841,7 @@ Scene_Home = (function (Scene) {
         div.setAttribute("data-type", type);
 
         var img = document.createElement("img");
-        img.src = logo;
+        img.src = logo || "ruta_a_imagen_por_defecto.jpg"; // Imagen por defecto si falta
         img.alt = name + " Logo";
         img.className = "channel-logo";
 
@@ -871,24 +878,20 @@ Scene_Home = (function (Scene) {
     },
 
 
+    // Mostrar el buscador
     showSearchPanel: function () {
-      // Muestra el contenedor del buscador
-      $("#searchContainer").removeClass("hidden");
-
-      // Establece el foco en la primera tecla del teclado virtual
-      var $firstKey = $(".key:visible").first(); // Selecciona la primera tecla visible
-      if ($firstKey.length > 0) {
-        Focus.to($firstKey); // Enfoca la primera tecla
-      }
+      $("#searchContainer").removeClass("hidden"); // Muestra el buscador
+      $("#customSearchInput").val(""); // Limpia el input antes de mostrarlo
+      $("#customSearchInput").focus(); // Pone el foco en el input para que puedas escribir
     },
 
 
+    // Ocultar el buscador
     hideSearchPanel: function () {
-      $("#searchContainer").addClass("hidden"); // Oculta el contenedor del buscador
-      $("#customSearchInput").text(""); // Limpia el campo de entrada de búsqueda
-      $("#searchResults").empty(); // Limpia los resultados
+      $("#searchContainer").addClass("hidden");
+      $("#customSearchInput").val(""); // Limpiar el contenido del input
+      $("#searchResults").empty(); // Limpiar los resultados
       $("#viewport").removeClass("no-scroll");
-      Focus.to(null); // Limpia el foco actual
     },
 
 
@@ -1323,6 +1326,34 @@ Scene_Home = (function (Scene) {
           return;
         }
 
+        // 👉 Si el foco está en el input de búsqueda, dejar usar flechas dentro del texto
+        if (current.attr('id') === 'customSearchInput') {
+          if (direction === 'right') {
+            var cursorPos = current[0].selectionStart;
+            var textLength = current.val().length;
+            if (cursorPos === textLength) {
+              // mover foco a siguiente (por ejemplo cerrar o resultados)
+              Focus.to($("#closeSearchButton")); // o el primer resultado
+            }
+            return; // evitar mover foco si aún está escribiendo
+          }
+
+          if (direction === 'left') {
+            // si querés volver desde el botón de cerrar al input
+            Focus.to($("#customSearchInput"));
+            var len = current.val().length;
+            current[0].setSelectionRange(len, len); // cursor al final
+            return;
+          }
+
+          // Permitir flechas arriba/abajo solo si querés salir del input
+          if (direction === 'down') {
+            Focus.to($(".result-item").first()); // primer resultado
+            return;
+          }
+          return; // detener aquí para que no interfiera
+        }
+
         // ** Navegación en el TECLADO VIRTUAL **
         if ($el.hasClass("key")) {
           if (direction === "up") {
@@ -1661,36 +1692,36 @@ Scene_Home = (function (Scene) {
     setCatchupsContent: function (data) {
       console.log(data);
       if (data.length > 0) {
-
-        var cells = "";
-
+        var rows = ""; // Aquí se generarán los bouquets
         data.forEach(function (catchup, index, array) {
           if (catchup.events != null && catchup.events.length > 0) {
-            var style = "";
-            if (catchup.background != null && typeof catchup.background != 'undefined') {
-              style = " background-color: #" + catchup.background;
-            }
-            cells += '<div class="channel-video focusable" data-id="' + catchup.epgStreamId + '" data-type="catchup" style="' + style + '">'
-              + '<img src="' + catchup.img + '" alt="">'
-              + '</div>';
+            // Cada catchup se renderiza como un bouquet
+            rows += `
+              <div class="focusable" data-id="${catchup.epgStreamId}" data-type="catchup">
+                <div class="catchup-title">${catchup.name}</div>
+              </div>
+            `;
           }
         });
-
-        var htmlRow = '<div class="col-sm-12 channels-div">'
-          + '<h4 class="heading">' + __("MenuCatchups") + '</h4>'
-          + '<div class="horizontal-slide row-catchups">'
-          + cells
-          + '</div>'
-          + '<div class="horizontal-slide row-catchup-dates hidden"></div>'
-          + '<div class="horizontal-slide row-catchup-events hidden"></div>'
-        '</div>';
-
+        // HTML principal agrupado en bouquet
+        var htmlRow = `
+          <div class="col-sm-12 channels-div">
+            <div class="vertical-slide row-catchups">
+              ${rows}
+            </div>
+            <div class="row-catchup-dates hidden"></div>
+            <div class="row-catchup-events hidden"></div>
+          </div>
+        `;
         $("#catchupsRow").html(htmlRow);
         $("#catchupsRow").removeClass("hidden");
+
+        $("#menuCatchupModalLabel").html(__("MenuCatchups"));
       } else {
         $("#catchupsRow").addClass("hidden");
       }
     },
+
 
     setCatchupsRecordedContent: function (data) {
       if (data.length > 0) {
