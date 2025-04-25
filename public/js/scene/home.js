@@ -714,12 +714,16 @@ Scene_Home = (function (Scene) {
         }
 
         self.restartFocus();
+        if (!self.miniPlayerEnabled) {
+          self.playbackMetadata = {};
+        }
 
         if (callback) {
           callback();
         }
       });
     },
+
 
     initializeSearchEvents: function () {
       console.log("Inicializando eventos de búsqueda..."); // Esto debería aparecer en la consola
@@ -1308,7 +1312,7 @@ Scene_Home = (function (Scene) {
         if ($el.data("key") === "space" && direction === "up") {
           Focus.to($keys.eq(31));
           return;
-        }
+          }
         // ** Regla 7**: Si estás en el botón BORRAR y te mueves hacia arriba, ir a índice 34
         if ($el.data("key") === "clear" && direction === "up") {
           Focus.to($keys.eq(34));
@@ -1316,12 +1320,12 @@ Scene_Home = (function (Scene) {
         }
 
         // ** Regla 8**: Si estas en la barra del buscador y te mueves hacia arriba, no hacer nada
-        if ($el.is("#customSearchInput") && direction === "up") {
+        if($el.is("#customSearchInput") && direction === "up"){
           return;
         }
 
         // ** Regla 9**: Si estas en la barra del buscador y te mueves hacia abajo, ir a la primera tecla
-        if ($el.is("#customSearchInput") && direction === "down") {
+        if($el.is("#customSearchInput") && direction === "down"){
           Focus.to($keys.first());
           return;
         }
@@ -1593,7 +1597,7 @@ Scene_Home = (function (Scene) {
     },
 
     pause: function () {
-      if (this.playbackMetadata && (this.playbackMetadata.type == "vod" || this.playbackMetadata.type == "catchup-event")) {
+      if (this.playbackMetadata &&  (this.playbackMetadata.type == "vod" || this.playbackMetadata.type == "catchup-event")) {
         if (!nbPlayer.isPaused()) {
           nbPlayer.$player.pause();
         }
@@ -1822,7 +1826,7 @@ Scene_Home = (function (Scene) {
         style = " background-color: #" + catchup.background;
       }
 
-      if (CONFIG.app.brand === "jrmax") {
+      if(CONFIG.app.brand === "jrmax") {
         style = 'color:black';
       }
 
@@ -1875,8 +1879,8 @@ Scene_Home = (function (Scene) {
     },
 
     getHTMLRowChannel: function (row, title, isBouquet) {
-      var headingStyle = "";
-      var boderJrMax = "";
+      var headingStyle
+      var boderJrMax
       if (CONFIG.app.brand === "supercabo") {
         headingStyle = "style='width: 15em; border-top: 2px solid; border-bottom: 2px solid; border-right: 2px solid; border-radius: 0px 15px 15px 0px; border-color:orange'";
       }
@@ -1998,13 +2002,12 @@ Scene_Home = (function (Scene) {
         User.updateLastInteraction();
       }
       nbPlayer.playContent(type, url);
+      this.setPlayerMetadata(type, id, url, item);
       this.goToFullscreen();
 
       if (!nbPlayer.isFullscreen()) {
         nbPlayer.$player.userActive(false);
       }
-
-      this.setPlayerMetadata(type, id, url, item);
 
       //continue
       if (nbPlayer.nbPlayerAreControslActive() && !nbPlayer.isSideMenuOpened()) {
@@ -2105,13 +2108,28 @@ Scene_Home = (function (Scene) {
         var liveEvent = AppData.getLiveEvent(item);
         if (liveEvent != null) {
           var nextEvent = AppData.getNextEvent(item, liveEvent);
-          $("#nowEventLabel").html(getStringDate(liveEvent.startDate, "HH:mm") + ": " + (liveEvent.languages.length > 0 ? liveEvent.languages[0].title : ""));
-          $("#nextEventLabel").html(getStringDate(nextEvent.startDate, "HH:mm") + ": " + (nextEvent.languages.length > 0 ? nextEvent.languages[0].title : ""));
 
-          epgNowText = __("EPGAtThisTime") + ": " + (liveEvent.languages.length > 0 ? liveEvent.languages[0].title : "");
-          playerTime1Text = getStringDate(liveEvent.startDate, "HH:mm") + " - " + getStringDate(liveEvent.endDate, "HH:mm");
-          epgNextText = __("EPGNext") + ": " + (nextEvent.languages.length > 0 ? nextEvent.languages[0].title : "");
-          playerTime2Text = getStringDate(nextEvent.startDate, "HH:mm") + " - " + getStringDate(nextEvent.endDate, "HH:mm");
+          epgNowText = "";
+          epgNextText = "";
+          playerTime1Text = "";
+          playerTime2Text = "";
+
+          if (liveEvent != null) {
+            $("#nowEventLabel").html(getStringDate(liveEvent.startDate, "HH:mm") + ": " + (liveEvent.languages.length > 0 ? liveEvent.languages[0].title : ""));
+            epgNowText = __("EPGAtThisTime") + ": " + (liveEvent.languages.length > 0 ? liveEvent.languages[0].title : "");
+            playerTime1Text = getStringDate(liveEvent.startDate, "HH:mm") + " - " + getStringDate(liveEvent.endDate, "HH:mm");
+          } else {
+            $("#nowEventLabel").html(__("EPGItemNoData"));
+          }
+
+          if (nextEvent != null) {
+            $("#nextEventLabel").html(getStringDate(nextEvent.startDate, "HH:mm") + ": " + (nextEvent.languages.length > 0 ? nextEvent.languages[0].title : ""));
+            epgNextText = __("EPGNext") + ": " + (nextEvent.languages.length > 0 ? nextEvent.languages[0].title : "");
+            playerTime2Text = getStringDate(nextEvent.startDate, "HH:mm") + " - " + getStringDate(nextEvent.endDate, "HH:mm");
+          } else {
+            $("#nextEventLabel").html(__("EPGItemNoData"));
+          }
+
           srcItemImage = item.img;// liveEvent.imageUrl <= to display the event image
           startTime = liveEvent.startDate;
           endTime = liveEvent.endDate;
@@ -2292,8 +2310,17 @@ Scene_Home = (function (Scene) {
 
     setEpgInfo: function (channel, liveEvent, nextEvent) {
       if (Focus.focused.data("id") == Number(channel.id)) {
-        $("#nowEventLabel").html(getStringDate(liveEvent.startDate, "HH:mm") + ": " + (liveEvent.languages.length > 0 ? liveEvent.languages[0].title : ""));
-        $("#nextEventLabel").html(getStringDate(nextEvent.startDate, "HH:mm") + ": " + (nextEvent.languages.length > 0 ? nextEvent.languages[0].title : ""));
+        if (liveEvent != null) {
+          $("#nowEventLabel").html(getStringDate(liveEvent.startDate, "HH:mm") + ": " + (liveEvent.languages.length > 0 ? liveEvent.languages[0].title : ""));
+        } else {
+          $("#nowEventLabel").html(__("EPGItemNoData"));
+        }
+
+        if (nextEvent != null) {
+          $("#nextEventLabel").html(getStringDate(nextEvent.startDate, "HH:mm") + ": " + (nextEvent.languages.length > 0 ? nextEvent.languages[0].title : ""));
+        } else {
+          $("#nextEventLabel").html(__("EPGItemNoData"));
+        }
       }
 
       //update player metadata if needed
@@ -2353,12 +2380,94 @@ Scene_Home = (function (Scene) {
       if (VODDetail.isShowed()) {
         VODDetail.setFocus();
       } else {
+
+        if (this.playbackMetadata) {
+          if (this.playbackMetadata.type == "service" && this.playbackMetadata.item != null) {
+            if (this.focusToChannelElement(this.playbackMetadata.item.id)) {
+              return;
+            }
+          } else if (this.playbackMetadata.type == "catchup-event" && this.playbackMetadata.item != null) {
+            if (this.focusToCatchupElement(this.playbackMetadata.item.catchupGroupId, this.playbackMetadata.item.eventId, this.playbackMetadata.item.startDate)) {
+              return;
+            }
+          }
+        }
+
         if (this.$lastFocused) {
           Focus.to(this.$lastFocused);
         } else {
           Focus.to(this.$videoContainer);
         }
+
       }
+    },
+
+    focusToChannelElement: function (channelId) {
+      var channel = AppData.getServiceTV(channelId);
+      if (channel != null) {
+        var bouquetIds = channel.bouquetIds;
+        for (var i = 0; i < bouquetIds.length; i++) {
+          var $bouquet = this.channelsGrid.find(".div-bouquet[data-id='" + bouquetIds[i] + "']");
+
+          if ($bouquet.length > 0) {
+            var $horizontalSlide = $bouquet.find('.horizontal-slide');
+            var $channel = $horizontalSlide.find('.channel-video[data-id="' + channel.id + '"]:first');
+
+            if ($channel.length > 0) {
+              this.channelsGrid.scrollTop(this.channelsGrid.scrollTop() + $bouquet.position().top);
+              $horizontalSlide.scrollLeft($channel.position().left);
+
+              // Check if channel is visible in viewport
+              var channelRight = $channel.position().left + $channel.width();
+              var containerWidth = $horizontalSlide.width();
+
+              if (channelRight > containerWidth) {
+                // Channel is off screen to the right, adjust scroll
+                $horizontalSlide.scrollLeft($channel.position().left - containerWidth + $channel.width());
+              } else if ($channel.position().left < 0) {
+                // Channel is off screen to the left, scroll to it
+                $horizontalSlide.scrollLeft($channel.position().left);
+              }
+
+              Focus.to($channel);
+              return true;
+            }
+          }
+        }
+      }
+
+      return false;
+    },
+
+    focusToCatchupElement: function (catchupGroupId, catchupId, catchupStartDate) {
+      var catchupDate = catchupStartDate.local().format("YYYY-MM-DD");
+      var catchup = AppData.getCatchup(catchupGroupId);
+      this.openCatchupCell(catchup);
+      this.openCatchupDate(catchup, catchupDate);
+
+      var $catchupsRow = $("#catchupsRow");
+      if ($catchupsRow.length > 0) {
+        this.channelsGrid.scrollTop(this.channelsGrid.scrollTop() + $catchupsRow.position().top);
+      }
+
+      var $rowCatchupEvents = $("#catchupsRow").find(".row-catchup-events:first");
+      var $catchupEvent = $rowCatchupEvents.find(".focusable[data-id='" + catchupId + "']:first");
+
+      if ($catchupEvent.length > 0) {
+        var eventRight = $catchupEvent.position().left + $catchupEvent.width();
+        var containerWidth = $rowCatchupEvents.width();
+
+        if (eventRight > containerWidth) {
+          $rowCatchupEvents.scrollLeft($catchupEvent.position().left - containerWidth + $catchupEvent.width());
+        } else if ($catchupEvent.position().left < 0) {
+          $rowCatchupEvents.scrollLeft($catchupEvent.position().left);
+        }
+
+        Focus.to($catchupEvent);
+        return true;
+      }
+
+      return false;
     },
 
     setMenuTitle: function (title) {
@@ -2432,6 +2541,7 @@ Scene_Home = (function (Scene) {
       if (activate) {
         this.verifyUserSession(true, function (success) {
           if (success && self.playbackMetadata != null) {
+            self.forcePlayback = true;
             self.playContent(self.playbackMetadata.type, self.playbackMetadata.item.id, self.playbackMetadata.item.url, self.playbackMetadata.item, false);
           } else {
             nbPlayer.nbPlayerResetContent();
@@ -2724,7 +2834,7 @@ Scene_Home = (function (Scene) {
         var $container = nbPlayer.isFullscreen() ? nbPlayer.$mainVideo : $(".common:first");
         ParentalControlDlg.show($container, this.$lastFocused, function () {
           self.playContent(type, id, url, item, reset, false);
-        }, function () {
+        }, function() {
           self.resetPlayerContent(false, __("ChannelBlocked").replace("%s", item.name), type, item);
         });
       } else {

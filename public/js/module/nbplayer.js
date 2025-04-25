@@ -80,6 +80,7 @@ var nbPlayer = {
   ignoredAudioTracks: [],
   ignoredTextTracks: [],
   isLG: false,
+  $lastMenuItemFocused: null,
 
   init: function (successCallback) {
 
@@ -377,8 +378,9 @@ var nbPlayer = {
       }
 
       if ($focusTo.length > 0) {
+        this.$lastMenuItemFocused = $focusTo;
         Focus.to($focusTo);
-        this.setSideMenuScroll();
+        this.setSideMenuScroll(false);
       }
     }
 
@@ -527,7 +529,7 @@ var nbPlayer = {
     this.$player.off('loadedmetadata');
     this.$player.on('loadedmetadata', function () {
       // if (!self.isLG) {
-      //   self.playerLoadedMetadata();
+         self.playerLoadedMetadata();
       // }
     });
 
@@ -966,13 +968,15 @@ var nbPlayer = {
       User.setPlayerAudioLang(null);
       this.$player.audioTracks().tracks_.forEach(function (track, index) {
         if (track.id == id) {
-          self.$player.audioTracks().tracks_[index].enabled = true;
+          console.log('Before switching:', nbPlayer.$player.audioTracks());
+          nbPlayer.$player.audioTracks().tracks_[index].enabled = true;
 
           //label saved instead of language because sometimes it brings several tracks with
           //the same language but different labels, and Id also because sometimes it changes (especially text tracks)
           self.updateChannelTrack(User.propChannelAudio, track.label);
+          console.log('After switching:', nbPlayer.$player.audioTracks());
         } else {
-          self.$player.audioTracks().tracks_[index].enabled = false;
+          //nbPlayer.$player.audioTracks().tracks_[index].enabled = false;
         }
       });
 
@@ -993,9 +997,11 @@ var nbPlayer = {
     this.$player.audioTracks().tracks_.forEach(function (track, index) {
       try {
         if (track[property] && track[property] == propertyValue) {
-          self.$player.audioTracks().tracks_[index].enabled = true;
+          console.log('Before switching:', nbPlayer.$player.audioTracks());
+          nbPlayer.$player.audioTracks().tracks_[index].enabled = true;
+          console.log('After switching:', nbPlayer.$player.audioTracks());
         } else {
-          self.$player.audioTracks().tracks_[index].enabled = false;
+          //self.$player.audioTracks().tracks_[index].enabled = false;
         }
       } catch(ex) {
         console.log(ex);
@@ -1029,7 +1035,7 @@ var nbPlayer = {
 
   showControls: function () {
     if (this.isSideMenuOpened()) {
-      this.focusOnSideMenu();
+      this.focusOnSideMenu(false);
       return;
     }
 
@@ -1110,7 +1116,7 @@ var nbPlayer = {
     this.endTime = null;
     this.duration = null;
     this.callbackOnEnded = null;
-    this.homeObject.playbackMetadata = {};
+    //this.homeObject.playbackMetadata = {};
     //this.clearTextTracks();
   },
 
@@ -1137,6 +1143,9 @@ var nbPlayer = {
   onReturn: function ($el, playbackMetadata, callback) {
     if (EPGDetails.isShowed()) {
       EPGDetails.close();
+    } else if (this.isSideMenuOpened()) {
+      this.closeSideMenu();
+      return;
     } else if (this.nbPlayerAreControslActive()) {
       if (this.isTracksMenuOpened()) {
         this.closeTracks();
@@ -1144,8 +1153,6 @@ var nbPlayer = {
       } else {
         this.hideControls();
       }
-    } else if (this.isSideMenuOpened()) {
-      this.closeSideMenu();
     } else {
       // this.cancelSeekTimeIndicator();
       this.exitFullscreen(callback);
@@ -1385,7 +1392,18 @@ var nbPlayer = {
     if (this.$playPauseButton.is(":visible")) {
       this.setFocusTo(this.$playPauseButton);
     } else {
-      this.setFocusTo(this.$vodControls.find(".focusable:visible:first"));
+      var $focusTo = null;
+      if (this.homeObject.playbackMetadata.type == "service") {
+        $focusTo = this.$vodControls.find(".focusable[data-type='side-menu']:first");
+      } 
+      
+      if ($focusTo == null) {
+        $focusTo = this.$vodControls.find(".focusable:visible:first");
+      }
+
+      if ($focusTo) {
+        this.setFocusTo($focusTo);
+      }
     }
   },
 
@@ -1406,8 +1424,7 @@ var nbPlayer = {
     this.hideControls();
     this.$sideMenuContainer.show();
     this.fillSideMenu();
-    this.focusOnSideMenu();
-    this.$sideMenu.scrollTop(this.getFocused().height() * this.getFocused().index());
+    this.focusOnSideMenu(true);
   },
 
   closeSideMenu: function () {
@@ -1492,7 +1509,7 @@ var nbPlayer = {
     }
   },
 
-  focusOnSideMenu: function () {
+  focusOnSideMenu: function (center) {
     var $focusTo = null;
     if (this.homeObject.playbackMetadata.type == "service") {
       $focusTo = this.$sideMenu.find(".focusable[data-id='" + this.homeObject.playbackMetadata.id + "']:first");
@@ -1502,18 +1519,30 @@ var nbPlayer = {
 
     if ($focusTo) {
       this.setFocusTo($focusTo);
-      this.setSideMenuScroll();
+      this.setSideMenuScroll(center);
     }
   },
 
-  setSideMenuScroll: function () {
+  setSideMenuScroll: function (center) {
     var $focusTo = this.getFocused();
-    var currentTop = $focusTo.position().top;
-    if (currentTop < 0) {
-      this.$sideMenu.scrollTop(this.$sideMenu.scrollTop() + currentTop);
-    } else if ((currentTop + $focusTo.height()) > this.$sideMenu.height()) {
-      var jump = this.$sideMenu.scrollTop() + $focusTo.height() + parseInt($focusTo.css('marginTop'));
-      this.$sideMenu.scrollTop(jump);
+
+    if (!$focusTo || !$focusTo.length) {
+      return;
+    }
+
+    var menuHeight = this.$sideMenu.height();
+    var elementHeight = $focusTo.outerHeight();
+    var elementTop = $focusTo.position().top;
+    var scrollTop = this.$sideMenu.scrollTop();
+
+    if (center) {
+      var centerPosition = scrollTop + (elementTop - (menuHeight/2) + (elementHeight/2));
+      this.$sideMenu.scrollTop(centerPosition);
+    } else if (elementTop < 0) {
+      this.$sideMenu.scrollTop(scrollTop + elementTop);
+    } else if ((elementTop + elementHeight) > menuHeight) {
+      var newScrollTop = scrollTop + (elementTop - menuHeight + elementHeight) + 40;
+      this.$sideMenu.scrollTop(newScrollTop);
     }
   },
 

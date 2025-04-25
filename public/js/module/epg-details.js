@@ -54,49 +54,49 @@ EPGDetails = (function (Events) {
     },
 
     getHtmlDialogEpgDetails: function () {
-      return `
-        <div class="modal fade alerts nb-alert epg-dialog-details" role="dialog" style="background-color: #ffffff00; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-          <div class="modal-dialog modal-center" style="width: 70%;">
-            <div class="modal-content" style="height: 40em; border-radius: 12px; overflow: hidden; padding: 16px;">
+      return ''
+        + '<div class="modal fade alerts nb-alert epg-dialog-details" role="dialog" style="background-color: #ffffff00; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">'
+        +  '<div class="modal-dialog modal-center" style="width: 70%;">'
+        +    '<div class="modal-content" style="height: 40em; border-radius: 12px; overflow: hidden; padding: 16px;">'
 
-              <!-- Primera Fila -->
-              <div style="height: 30%; display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
-                <!-- Logo del Canal -->
-                <div class="col-sm-3" text-align: center;height: 193px;width: 264px;>
-                  <img class="epg-dialog-details-img" src="" alt="" style="width: 100%; border-radius: 8px;">
-                </div>
+        +      '<!-- Primera Fila -->'
+        +      '<div style="height: 30%; display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">'
+        +        '<!-- Logo del Canal -->'
+        +        '<div class="col-sm-3" style="text-align: center;width: 15em;">'
+        +          '<img class="epg-dialog-details-img" src="" alt="">'
+        +        '</div>'
 
-                <!-- Información Central -->
-                <div class="col-sm-6" style="text-align: justify;height: 11em;display: flex;flex-direction: column;flex-wrap: nowrap;justify-content: space-evenly;"">
-                  <h3 class="epg-dialog-details-header-channel" style="font-size: 1.8em; font-weight: bold; margin: 0;"></h3>
-                  <p class="epg-dialog-details-header-lcn" style="font-size: 1.2em; color: #ffffff;"></p>
-                  <p class="epg-dialog-details-header-time" style="font-size: 1.2em; color: #ffffff;"></p>
-                  <p class="epg-dialog-details-header-duration" style="font-size: 1.2em; color: #ffffff;"></p>
-                </div>
+        +        '<!-- Información Central -->'
+        +        '<div class="col-sm-6" style="text-align: justify;width: 80%;height: 11em;display: flex;flex-direction: column;flex-wrap: nowrap;justify-content: space-evenly;"">'
+        +          '<h3 class="epg-dialog-details-header-channel" style="font-size: 1.8em; font-weight: bold; margin: 0;"></h3>'
+        +          '<p class="epg-dialog-details-header-lcn" style="font-size: 1.2em; color: #ffffff;"></p>'
+        +          '<p class="epg-dialog-details-header-time" style="font-size: 1.2em; color: #ffffff;"></p>'
+        +          '<p class="epg-dialog-details-header-duration" style="font-size: 1.2em; color: #ffffff;"></p>'
+        +        '</div>'
 
-                <!-- Imagen del Evento -->
-                <div class="col-sm-3" text-align: center;height: 193px;width: 264px;>
-                  <img class="epg-dialog-details-event-img" src="" alt="" style="width: 100%; border-radius: 8px;">
-                </div>
-              </div>
+        +        '<!-- Imagen del Evento -->'
+        +        '<div class="col-sm-3" style="text-align: center;width: 15em;">'
+        +          '<img class="epg-dialog-details-event-img" src="" alt="">'
+        +        '</div>'
+        +      '</div>'
 
-              <!-- Segunda Fila -->
-              <div  style="height: 20em;">
-                <h4 class="epg-dialog-details-title" style="font-size: 1.6em; font-weight: bold; text-align: center;"></h4>
-                <p class="epg-dialog-details-description" style="font-size: 1.2em; text-align: justify; margin-top: 8px;"></p>
-              </div>
+        +      '<!-- Segunda Fila -->'
+        +      '<div  style="height: 20em;">'
+        +        '<h4 class="epg-dialog-details-title" style="font-size: 1.6em; font-weight: bold; text-align: center;"></h4>'
+        +        '<p class="epg-dialog-details-description" style="font-size: 1.2em; text-align: justify; margin-top: 8px;line-height: 1.5em;"></p>'
+        +      '</div>'
 
-              <!-- Tercera Fila -->
-              <div  style="display: flex; justify-content: center; gap: 16px;">
-                <div class="nb-icon-button focusable nb-icon-star epg-dialog-details-header-fav" style="width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; background-color: #007bff;"></div>
-                <button type="button" class="btn-default btn-lg focusable epg-dialog-live hidden" data-parent-type="message" style="background-color: #007bff; color: #fff; padding: 10px 20px; border-radius: 8px;">${ __("EPGLive")}</button>
-                <button type="button" class="btn-default btn-lg focusable epg-dialog-watch hidden" data-parent-type="message" style="background-color: #28a745; color: #fff; padding: 10px 20px; border-radius: 8px;">${__("EPGWatch")}</button>
-                <button type="button" class="btn-default btn-lg focusable epg-dialog-record hidden" data-parent-type="message" style="background-color:rgb(167, 40, 40); color: #fff; padding: 10px 20px; border-radius: 8px;">${__("CatchupRecordButton")}</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
+        +      '<!-- Tercera Fila -->'
+        +      '<div  style="display: flex; justify-content: center; gap: 16px;">'
+        +        '<div class="nb-icon-button focusable nb-icon-star epg-dialog-details-header-fav" style="width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; background-color: #007bff;"></div>'
+        +        '<button type="button" class="btn-default btn-lg focusable epg-dialog-live hidden" data-parent-type="message" style="background-color: #007bff; color: #fff; padding: 10px 20px; border-radius: 8px;">' + __("EPGLive") + '</button>'
+        +        '<button type="button" class="btn-default btn-lg focusable epg-dialog-watch hidden" data-parent-type="message" style="background-color: #28a745; color: #fff; padding: 10px 20px; border-radius: 8px;">' + __("EPGWatch") + '</button>'
+        +        '<button type="button" class="btn-default btn-lg focusable epg-dialog-record hidden" data-parent-type="message" style="background-color:rgb(167, 40, 40); color: #fff; padding: 10px 20px; border-radius: 8px;">' + __("CatchupRecordButton") + '</button>'
+        +      '</div>'
+        +    '</div>'
+        +  '</div>'
+        +'</div>'
+
     },
 
     show: function ($container, metadata, homeObject, $lastFocused) {
@@ -223,17 +223,24 @@ EPGDetails = (function (Events) {
         this.$eventDuration.text(duration);
         this.$detailsTitle.text(title);
         this.$detailsDescription.text(description);
-        this.$imageEvent.loadImage(image);
 
-        // condición para mostrar la imagen solo si está disponible
+        var $imageContainer = this.$imageEvent.closest("div"); // div contenedor de la imagen del evento
+
         if (image) {
-          this.$imageEvent.loadImage(image);
-          this.$imageEvent.show();  // Mostrar la imagen
+          this.$imageEvent
+            .off("error") // limpiar eventos anteriores
+            .on("error", function () {
+              $imageContainer.hide(); // ocultar si hay error de carga
+            })
+            .attr("src", image);
+
+          $imageContainer.show(); // por si estaba oculto anteriormente
         } else {
-          this.$imageEvent.hide();  // Ocultar la imagen si no hay
+          $imageContainer.hide(); // si no hay imagen, ocultar directamente
         }
       }
     },
+
 
     isShowed: function () {
       return this.$epgDetails.hasClass("in");
@@ -241,15 +248,17 @@ EPGDetails = (function (Events) {
 
     navigate: function (direction) {
       var $focused = Focus.focused;
+      var $buttons = this.$epgDetails.find(".focusable:visible"); // Todos los elementos enfocables
+      var currentIndex = $buttons.index($focused);
 
-      if (direction == "up" && this.$favButton.is(":visible")) {
+      if (direction == "up" && !$focused.is(this.$favButton)) {
         Focus.to(this.$favButton);
-      } else if (direction == "down" && Focus.focused.is(this.$favButton)) {
-        Focus.to(this.$epgDetails.find(".modal-footer button:visible:last"));
-      } else if (direction == "left" && $focused.hasClass("btn-default")) {
-        Focus.to($focused.prev("button:visible"));
-      } else if (direction == "right" && $focused.hasClass("btn-default")) {
-        Focus.to($focused.next("button:visible"));
+      } else if (direction == "down" && $focused.is(this.$favButton)) {
+        Focus.to($buttons.filter(".epg-dialog-live, .epg-dialog-watch, .epg-dialog-record").first());
+      } else if (direction == "left" && currentIndex > 0) {
+        Focus.to($buttons.eq(currentIndex - 1));
+      } else if (direction == "right" && currentIndex < $buttons.length - 1) {
+        Focus.to($buttons.eq(currentIndex + 1));
       }
     },
 

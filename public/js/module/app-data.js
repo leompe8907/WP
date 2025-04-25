@@ -420,6 +420,17 @@ AppData = (function (Events) {
       return false;
     },
 
+    getBouquetById: function (id) {
+      //var filtered = this.services.filter(channel => channel.id == id);
+      var filtered = this.bouquets.filter(function (channel) {
+        return channel.bouquetId == id;
+      });
+      if (filtered.length > 0) {
+        return filtered[0];
+      }
+      return false;
+    },
+
     getNextPrevServiceTV: function (channel, addIndex) {
 
       var index = this.channels.indexOf(channel);

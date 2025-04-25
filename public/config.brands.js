@@ -189,6 +189,7 @@ var CONFIG_BRANDS = [
     showTime: false,
     epgLineColorTime: "#2CE308",
     developedBy: "Network Broadcast",
+    miniPlayerEnabled: false
   },
   {
     brand: "cableatlantico",
