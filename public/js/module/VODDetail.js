@@ -43,8 +43,8 @@ VODDetail = (function (Events) {
       duration = duration != null && duration > 0 ? Math.floor(duration / 60) : 0;
       var durationString = duration > 0 ? (duration + " " + __("MoviesMinutes")) : "";
       var rating = vod.rating / 10;
-      img = ((img == null || img.length == 0) && vod.image1Id) ? baseUrl + "/cv_data_pub/images/" + vod.image1Id + "/v/original.jpg" : img;
-      img = ((img == null || img.length == 0) && vod.image2Id) ? baseUrl + "/cv_data_pub/images/" + vod.image2Id + "/v/original.jpg" : img;
+      // img = ((img == null || img.length == 0) && vod.image1Id) ? baseUrl + "/cv_data_pub/images/" + vod.backgroundImageURL + "/v/original.jpg" : img;
+      // img = ((img == null || img.length == 0) && vod.image2Id) ? baseUrl + "/cv_data_pub/images/" + vod.image2Id + "/v/original.jpg" : img;
       img = ((img == null || img.length == 0) && vod.image3Id) ? baseUrl + "/cv_data_pub/images/" + vod.image3Id + "/v/original.jpg" : img;
 
       if (vod.isSeries) {

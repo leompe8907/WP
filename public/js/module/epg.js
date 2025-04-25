@@ -19,6 +19,7 @@ EPG = (function (Events) {
       this.loading = null;
       this.rowsOnInit = CONFIG.app.newEpgRowsOnInit;
       this.epgStartDate = null;
+      this.vodObject = null;
     },
 
     isShowed: function () {
@@ -543,7 +544,14 @@ EPG = (function (Events) {
     // regreso a home
     goToHome: function () {
       this.hide();
+      this.homeObject.setMenuTitle(__("MenuTitle")); // o lo que uses para el título
       Focus.to(this.homeObject.$el);
+    },
+
+    goToVOD: function () {
+      this.hide();
+      this.vodObject.show();
+      Focus.to(this.vodObject.$el);
     },
 
     logOut: function () {
@@ -565,6 +573,11 @@ EPG = (function (Events) {
       // Al entrar al boton de buscar muestra el dialogo del buscador
       if ($el.is("#search")) {
         this.homeObject.showSearchPanel();
+        return;
+      }
+
+      if ($el.is("#vod")) {
+        this.goToVOD();
         return;
       }
 

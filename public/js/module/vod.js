@@ -12,6 +12,7 @@ VOD = (function (Events) {
       this.$defaultFocus = null;
       this.bodyFontSize = 0;
       this.$sceneParent = null;
+      this.epgObject = null;
     },
 
     isShowed: function () {
@@ -156,8 +157,9 @@ VOD = (function (Events) {
 
     goToEPG: function () {
       this.hide();
+      this.epgObject.show();
       Focus.to(this.epgObject.$el);
-    },
+  },
 
     logOut: function () {
       this.hide();
@@ -168,21 +170,9 @@ VOD = (function (Events) {
     },
 
     onEnter: function ($el, callbackForPlay) {
-      // var id = $el.data("id");
-      // this.homeObject.currentVodCategoryId = $el.data("category-id");
-      // this.homeObject.$lastFocused = Focus.focused;
-      // VODDetail.show(id, this.currentVodCategoryId, this.homeObject);
-      //Router.go('voddetail', id, this.homeObject.currentVodCategoryId, this.homeObject);
-
-      // Al entrar al boton de home regresa a home
+      // Primero manejamos botones especiales del menú
       if ($el.is("#start")) {
         this.goToHome();
-        return;
-      }
-
-      // Al entrar al boton de buscar muestra el dialogo del buscador
-      if ($el.is("#search")) {
-        this.homeObject.showSearchPanel();
         return;
       }
 
@@ -196,13 +186,30 @@ VOD = (function (Events) {
         return;
       }
 
-
-      // Al entrar al logout, saldra el modal de cerrar sesion
       if ($el.is("#logout")) {
-        // Mostrar alerta de confirmación antes del logout
-        this.homeObject.$el.showAlertConfirm(__("LoginLogoutConfirm"), 'LoginLogoutConfirm', __("LoginLogoutButton"), __("LoginLogoutCancelButton"), 'cancel');
-        return; // Importante: evitamos ejecutar el logout de inmediato
+        this.homeObject.$el.showAlertConfirm(
+          __("LoginLogoutConfirm"),
+          'LoginLogoutConfirm',
+          __("LoginLogoutButton"),
+          __("LoginLogoutCancelButton"),
+          'cancel'
+        );
+        return;
       }
+
+      if ($el.is("#search")) {
+        this.homeObject.showSearchPanel();
+        return;
+      }
+
+      // Si no es un botón del menú, asumimos que es un VOD
+      var id = $el.data("id");
+      if (!id) return; // protección por si el elemento no tiene ID válido
+
+      this.homeObject.currentVodCategoryId = $el.data("category-id");
+      this.homeObject.$lastFocused = Focus.focused;
+      VODDetail.show(id, this.currentVodCategoryId, this.homeObject);
+      Router.go('voddetail', id, this.homeObject.currentVodCategoryId, this.homeObject);
 
 
       // AppData.getTopLevelVodM3u8Url(id, function(url) {

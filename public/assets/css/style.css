@@ -660,6 +660,7 @@ div.horizontal-slide {
   display: flex;
   height: 50%;
   margin: 1em;
+  margin-top: 3.8em;
 }
 
 .vod-top-left {

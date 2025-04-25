@@ -104,6 +104,11 @@
     background-color: #0000003d;
 }
 
+.row.navbar {
+  position: relative;
+  z-index: 1001; /* Mayor que 999 */
+}
+
 .navbar{
   display: flex;
   flex-direction: row;
@@ -353,7 +358,7 @@
 /* Contenedor de resultados */
 .search-results {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* 7 columnas */
+  grid-template-columns: repeat(5, 1fr); /* 5 columnas */
   grid-template-rows: auto;
   grid-auto-rows: 1fr; /* Filas automáticas */
   gap: 10px;
@@ -364,6 +369,7 @@
   box-sizing: border-box;
   width: 95%; /* Ajustable según el diseño */
   height: 100%;
+  justify-items: center;
 }
 
 /* Elementos individuales */
@@ -380,6 +386,7 @@
   text-align: center;
   transition: 0.2s;
   height: 12em;
+  width: 15em;
 }
 
 .result-item:hover {
@@ -388,8 +395,11 @@
 }
 
 .result-item img {
-  width: 100%;
-  height: auto;
+  width: 50%;
+  height: 80%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
   border-radius: 5px;
 }
 
@@ -407,9 +417,11 @@
   color: white;
   margin-top: 10px;
   text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  display: block;
+  max-width: 100%;
 }
 
 /* ---------------------- carrousel -------------- */
@@ -428,17 +440,24 @@
 
 .swiper-button-prev,
 .swiper-button-next {
-  color: white;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 15px;
-  border-radius: 50%;
-  transition: background 0.3s ease;
+  background-color: #2c2c2c;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+  height: 45%;
 }
 
 .swiper-button-prev:hover,
 .swiper-button-next:hover {
-  background: rgba(255, 255, 255, 0.8);
-  color: black;
+  background-color: #007bff;
+  color: white;
+  transform: translateY(-2px);
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
 }
 
 /* ---------------------------------------- NavBar -------------------------- */

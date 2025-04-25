@@ -40,6 +40,10 @@ Scene_Home = (function (Scene) {
       this.isLG = Device.isLG || Device.isWEBOS;
       this.miniPlayerEnabled = CONFIG.app.miniPlayerEnabled === false ? false : true;
       this.initializeSearchEvents();
+      EPG.homeObject = this;
+      VOD.homeObject = this;
+      EPG.vodObject = VOD;
+      VOD.epgObject = EPG;
     },
     /**
      * @inheritdoc Scene#render
@@ -784,10 +788,6 @@ Scene_Home = (function (Scene) {
     },
 
 
-
-
-
-
     filterChannels: function (query) {
       var services = AppData.services; // Datos de canales
       var vods = AppData.allVods; // Datos de VOD
@@ -807,10 +807,17 @@ Scene_Home = (function (Scene) {
           return service.name.toLowerCase().indexOf(query) !== -1;
         }));
 
-        // Filtrar VOD
-        results = results.concat(vods.filter(function (vod) {
-          return vod.name.toLowerCase().indexOf(query) !== -1;
-        }));
+        // Filtrar VODs sin duplicados (por nombre)
+        const seenVodNames = new Set();
+        const uniqueVods = vods.filter(function (vod) {
+          const normalized = vod.name.toLowerCase().trim();
+          if (seenVodNames.has(normalized)) {
+            return false;
+          }
+          seenVodNames.add(normalized);
+          return normalized.includes(query);
+        });
+        results = results.concat(uniqueVods);
 
         // Filtrar Catchups
         results = results.concat(catchups.filter(function (catchup) {
@@ -836,7 +843,7 @@ Scene_Home = (function (Scene) {
       for (var i = 0; i < results.length; i++) {
         var result = results[i];
         var type = result.catchupGroupId ? "catchup" : (result.categories ? "vod" : "service");
-        var logo = (type === "service") ? (result.img || "") : (type === "vod") ? (result.posterListURL || "") : (result.imageUrl || "");
+        var logo = (type === "service") ? (result.img || "") : (type === "vod") ? (result.posterListURL || "https://pmdw-1.in.tv.br//cv_data_pub/images/"+result.image1Id+"/v/vod_poster_list.jpg") : (result.imageUrl || "");
         var name = result.name || "Sin nombre";
 
         var div = document.createElement("div");
@@ -845,7 +852,7 @@ Scene_Home = (function (Scene) {
         div.setAttribute("data-type", type);
 
         var img = document.createElement("img");
-        img.src = logo || "ruta_a_imagen_por_defecto.jpg"; // Imagen por defecto si falta
+        img.src = logo;
         img.alt = name + " Logo";
         img.className = "channel-logo";
 
