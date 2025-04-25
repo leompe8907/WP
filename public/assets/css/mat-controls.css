@@ -81,6 +81,8 @@
 }
 
 .material-icons-round {
+  line-height: 1;
+  display: inline-block;
   padding: 0.2em;
 }
 
@@ -91,4 +93,25 @@
 
 .nb-vjs-vod-time {
   padding: 0.6em;
+}
+
+.mat-controls-item-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-icons {
+  width: 2.4em; /* Ajusta al tamaño de los demás iconos */
+  object-fit: contain;
+  display: inline-block;
+  background: radial-gradient(circle, #222324 69%, transparent 70%);
+  border-radius: 50%;
+  padding: 0.2em;
+  transition: all 0.3s ease-in-out;
+}
+
+.mat-controls-item-control.focus .custom-icons {
+  background: radial-gradient(circle, #cc3300 69%, transparent 70%);
+  outline: none!important;
 }

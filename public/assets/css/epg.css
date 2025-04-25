@@ -136,9 +136,15 @@
     margin-bottom: 0.4em;
 }
 
-.epg-dialog-details-img {
+.epg-dialog-details-img, .epg-dialog-details-event-img {
     width: 100%;
     height: 100%;
+    border-radius: 10%;
+    -webkit-border-radius: 10%;
+    -moz-border-radius: 10%;
+    -ms-border-radius: 10%;
+    -o-border-radius: 10%;
+    object-fit: cover;
 }
 
 .epg-dialog-details-header-info {
@@ -151,4 +157,12 @@
 
 .epg-dialog-details-title {
     margin-bottom: 0.4em;
+}
+
+.epg-dialog-live .focus,
+.epg-dialog-details .focus {
+  border: 3px solid #ffffff !important;
+  box-shadow: 0 0 10px #ffffff !important;
+  transform: scale(1.03);
+  z-index: 999;
 }
