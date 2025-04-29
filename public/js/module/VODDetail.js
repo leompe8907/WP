@@ -12,9 +12,16 @@ VODDetail = (function (Events) {
       this.$sceneParent = this.$container.closest(".scene");
       this.$container.css({ "visibility": "visible", "background-image": 'url(./assets/images/' + CONFIG.app.brand + '/background.png)' });
       this.reset();
+      this.vodObject = null;
+      this.vodScene = null;
+      this.epgObject = null;
+
     },
 
     show: function (id, categoryId, homeObject) {
+      this.homeObject = homeObject;
+      this.reset(); // 🔥 esto limpia todo antes de volver a mostrar
+
       this.initializeValues();
       this.$container.find("#episodesLabel").html(__("MoviesEpisodes"));
       $(".nb-dropdown").nbDropdown([], 0);
@@ -114,9 +121,62 @@ VODDetail = (function (Events) {
       }
     },
 
+    goToHome: function () {
+      this.reset();
+      this.$container.hide();
+      this.homeObject.setMenuTitle(__("MenuTitle"));
+      Focus.to(this.homeObject.$el);
+    },
+
+    goToVOD: function () {
+      this.reset();
+      this.$container.hide();
+      this.vodScene.show();
+      Focus.to(this.vodScene.$vodContainer);
+    },
+
+    goToEPG: function () {
+      this.reset();
+      this.$container.hide();
+      this.epgObject.show();
+      Focus.to(this.epgObject.$el);
+    },
+
     onEnter: function ($el, event) {
 
       var self = this;
+
+      if ($el.is("#start")) {
+        this.goToHome();
+        return;
+      }
+
+      if ($el.is("#epg")) {
+        this.goToEPG();
+        return;
+      }
+
+      if ($el.is("#vod")) {
+        this.goToVOD();
+        return;
+      }
+
+      if ($el.is("#menuAboutLabel")) {
+        $("#softwareInfoModal").modal("show");
+        return;
+      }
+
+      if ($el.is("#logout")) {
+        this.homeObject.$el.showAlertConfirm(
+          __("LoginLogoutConfirm"),
+          'LoginLogoutConfirm',
+          __("LoginLogoutButton"),
+          __("LoginLogoutCancelButton"),
+          'cancel'
+        );
+        return;
+      }
+
 
       if ($el.isNbDropdown()) {
         if ($el.isNbDropdownOpened()) {

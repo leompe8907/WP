@@ -209,7 +209,7 @@ VOD = (function (Events) {
       this.homeObject.currentVodCategoryId = $el.data("category-id");
       this.homeObject.$lastFocused = Focus.focused;
       VODDetail.show(id, this.currentVodCategoryId, this.homeObject);
-      Router.go('voddetail', id, this.homeObject.currentVodCategoryId, this.homeObject);
+      //Router.go('voddetail', id, this.homeObject.currentVodCategoryId, this.homeObject);
 
 
       // AppData.getTopLevelVodM3u8Url(id, function(url) {

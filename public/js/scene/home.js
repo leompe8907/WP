@@ -42,8 +42,12 @@ Scene_Home = (function (Scene) {
       this.initializeSearchEvents();
       EPG.homeObject = this;
       VOD.homeObject = this;
+      VODDetail.homeObject = this;
       EPG.vodObject = VOD;
       VOD.epgObject = EPG;
+      VODDetail.vodScene = VOD;
+      VODDetail.epgObject = EPG;
+
     },
     /**
      * @inheritdoc Scene#render
@@ -72,7 +76,6 @@ Scene_Home = (function (Scene) {
       $(".epg-message").html(__("EPGLoading"));
       EPG.homeObject = this;
       VOD.homeObject = this;
-      VODDetail.homeObject = this;
       nbPlayer.homeObject = this;
 
       if (!CONFIG.app.showTime) {
@@ -1931,46 +1934,56 @@ Scene_Home = (function (Scene) {
     },
 
     getHTMLRowVOD: function (vods, title, idCategory, allOption) {
-      // if (vods.length == 0) {
-      // 	return "";
-      // }
-      var headingStyle
+      var headingStyle;
       if (CONFIG.app.brand === "supercabo") {
-        headingStyle = "style='width: 15em; border-top: 2px solid; border-bottom: 2px solid; border-right: 2px solid; border-radius: 0px 15px 15px 0px; border-color:orange'"
+        headingStyle = "style='width: 15em; border-top: 2px solid; border-bottom: 2px solid; border-right: 2px solid; border-radius: 0px 15px 15px 0px; border-color:orange'";
       }
 
       if (CONFIG.app.brand === "jrmax") {
-        headingStyle = "style='color:black'"
+        headingStyle = "style='color:black'";
       }
 
-      var html = '<div class="col-sm-12 channels-div">'
-        + '<h4 class="heading" ' + headingStyle + '>' + title + '</h4>'
-        + '<div class="horizontal-slide">';
+      // Generar un ID único por categoría para usar como identificador del Swiper
+      var swiperId = "swiper-vod-cat-" + idCategory;
 
-      //all movies item
-      // if (allOption) {
-      //   html += '<div class="channel-video vod-list vod-video focusable" data-id="0" data-type="vod">'
-      //     + '<div class="vod-all-item"><i class="fa fa-film ' + headingStyle + '" aria-hidden="true"></i><span ' + headingStyle + '>' + __("MoviesAllVod") + '</span></div>'
-      //     + '</div>';
-      // }
+      var html = '<div class="col-sm-12 channels-div vod-carousel">'
+        + '<h4 class="heading" ' + headingStyle + '>' + title + '</h4>'
+        + '<div class="swiper-container ' + swiperId + '">'
+        + '<div class="swiper-wrapper">';
+
       var config = Storage.get("base_url");
 
       vods.forEach(function (vod) {
-        var posterInfoURL
-        if (vod.posterInfoURL == undefined || vod.posterInfoURL == null || vod.posterInfoURL == "null") {
-          posterInfoURL = config + "/cv_data_pub/images/" + vod.image1Id + "/v/vod_poster_list.jpg"
-        }
-        else {
-          posterInfoURL = vod.posterInfoURL
+        var posterInfoURL;
+        if (!vod.posterInfoURL || vod.posterInfoURL === "null") {
+          posterInfoURL = config + "/cv_data_pub/images/" + vod.image1Id + "/v/vod_poster_list.jpg";
+        } else {
+          posterInfoURL = vod.posterInfoURL;
         }
 
-        html += '<div class="channel-video vod-list focusable" data-id="' + vod.id + '" data-category-id="' + idCategory + '" data-type="vod">'
+        html += '<div class="swiper-slide channel-video vod-list focusable" data-id="' + vod.id + '" data-category-id="' + idCategory + '" data-type="vod">'
           + '<img src="' + posterInfoURL + '" onerror="imgOnError(this)" alt="">'
           + '</div>';
       });
-      html += '</div>'
-        + '</div>';
 
+      html += '</div>' // .swiper-wrapper
+        + '<div class="swiper-button-next"></div>'
+        + '<div class="swiper-button-prev"></div>'
+        + '</div>' // .swiper-container
+        + '</div>'; // .channels-div
+
+        setTimeout(() => {
+          new Swiper(".swiper-container", {
+            slidesPerView: 9,
+            spaceBetween: 10,
+            navigation: {
+              nextEl: ".swiper-button-next",
+              prevEl: ".swiper-button-prev",
+            },
+          });
+        }, 100);
+
+      // Devolver HTML y luego inicializar Swiper en otro paso
       return html;
     },
 
