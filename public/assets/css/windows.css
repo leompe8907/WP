@@ -539,8 +539,115 @@
   }
 }
 
-#catchupModalContent .channels-div {
+/* catchup modal style */
+
+.catchup-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.95);
+  z-index: 9999;
+  padding: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.catchup-grid {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  grid-template-rows: auto 1fr;
+  gap: 1em;
+  width: 90%;
+  height: 90%;
+  color: white;
+}
+
+.catchup-title {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 1.5em;
+}
+
+.catchup-dates {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  gap: 1em;
+  justify-content: flex-start;
+}
+
+.catchup-dates button {
+  background: #444;
+  border: none;
+  color: white;
+  padding: 0.5em 1em;
+  border-radius: 0.5em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.catchup-dates button:hover,
+.catchup-dates button.selected {
+  background: #0af;
+}
+
+.catchup-channel-list {
+  grid-column: 1;
+  grid-row: 2;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.catchup-channel-list .channel-item {
+  display: flex;
+  align-items: center;
+  background: #333;
+  padding: 0.5em;
+  border-radius: 0.5em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.catchup-channel-list .channel-item:hover,
+.catchup-channel-list .channel-item.focus {
+  background: #0af;
+}
+
+.catchup-channel-list img {
+  height: 3em;
+  width: 3em;
+  object-fit: contain;
+  margin-right: 1em;
+}
+
+.catchup-event-list {
+  grid-column: 2;
+  grid-row: 2;
+  overflow-y: auto;
   display: flex;
   flex-wrap: wrap;
   gap: 1em;
+}
+
+.catchup-event-list .event-card {
+  background: #222;
+  padding: 1em;
+  border-radius: 0.5em;
+  width: 12em;
+  height: 8em;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s;
+}
+
+.catchup-event-list .event-card:hover {
+  transform: scale(1.05);
+  background: #0af;
 }

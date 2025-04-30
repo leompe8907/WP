@@ -465,18 +465,26 @@
   </div>
 
   <!-- Modal de Catchups -->
-  <div id="catchupModal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document" style="width: 90%;">
-      <div class="modal-content" style="background-color: #000; color: #fff;">
-        <div class="modal-header">
-          <h4 id ="menuCatchupModalLabel" class="modal-title"></h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body" id="catchupModalContent" style="max-height: 80vh; overflow-y: auto;">
-          <div class="row hidden" id="catchupsRow"></div>
-        </div>
+  <div id="catchupModal" class="catchup-modal" style="display: none;">
+    <div class="catchup-grid">
+      <!-- 1x1: Título -->
+      <div class="catchup-title">
+        <h3>📺 Lista de Canales</h3>
+      </div>
+
+      <!-- 1x2: Botones de fechas -->
+      <div class="catchup-dates" id="catchupDateButtons">
+        <!-- Botones generados dinámicamente -->
+      </div>
+
+      <!-- 2x1: Lista de canales -->
+      <div class="catchup-channel-list" id="catchupChannelList">
+        <!-- Canales generados dinámicamente -->
+      </div>
+
+      <!-- 2x2: Lista de eventos de la fecha seleccionada -->
+      <div class="catchup-event-list" id="catchupEventList">
+        <!-- Eventos generados dinámicamente -->
       </div>
     </div>
   </div>

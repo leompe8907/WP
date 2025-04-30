@@ -47,6 +47,9 @@ Scene_Home = (function (Scene) {
       VOD.epgObject = EPG;
       VODDetail.vodScene = VOD;
       VODDetail.epgObject = EPG;
+      let catchupData = [];
+      let currentChannel = null;
+      let currentDate = null;
 
     },
     /**
