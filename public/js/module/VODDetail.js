@@ -123,14 +123,14 @@ VODDetail = (function (Events) {
 
     goToHome: function () {
       this.reset();
-      this.$container.hide();
+      this.onReturn()
       this.homeObject.setMenuTitle(__("MenuTitle"));
       Focus.to(this.homeObject.$el);
     },
 
     goToVOD: function () {
       this.reset();
-      this.$container.hide();
+      this.hide();
       this.vodScene.show();
       Focus.to(this.vodScene.$vodContainer);
     },
