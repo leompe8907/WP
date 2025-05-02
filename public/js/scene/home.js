@@ -1709,10 +1709,10 @@ Scene_Home = (function (Scene) {
     setCatchupsContent: function (data) {
       console.log(data);
       if (data.length > 0) {
-        var rows = ""; // Aquí se generarán los bouquets
+        var rows = ""; // Aquí se generarán los canales de los catchups
         data.forEach(function (catchup, index, array) {
           if (catchup.events != null && catchup.events.length > 0) {
-            // Cada catchup se renderiza como un bouquet
+            // Cada catchup se renderiza como un canal
             rows += `
               <div class="focusable" data-id="${catchup.epgStreamId}" data-type="catchup">
                 <div class="catchup-title">${catchup.name}</div>
@@ -1720,24 +1720,17 @@ Scene_Home = (function (Scene) {
             `;
           }
         });
-        // HTML principal agrupado en bouquet
-        var htmlRow = `
-          <div class="col-sm-12 channels-div">
-            <div class="vertical-slide row-catchups">
-              ${rows}
-            </div>
-            <div class="row-catchup-dates hidden"></div>
-            <div class="row-catchup-events hidden"></div>
-          </div>
-        `;
-        $("#catchupsRow").html(htmlRow);
-        $("#catchupsRow").removeClass("hidden");
+
+        // Insertamos los canales directamente en el div de catchupChannelList
+        $("#catchupChannelList").html(rows);
+        $("#catchupChannelList").removeClass("hidden");
 
         $("#menuCatchupModalLabel").html(__("MenuCatchups"));
       } else {
-        $("#catchupsRow").addClass("hidden");
+        $("#catchupChannelList").addClass("hidden");
       }
     },
+
 
 
     setCatchupsRecordedContent: function (data) {
@@ -1789,92 +1782,199 @@ Scene_Home = (function (Scene) {
     },
 
     openCatchupCell: function (catchup) {
-      // prepare dates
+      var self = this;  // Definir self para hacer referencia al objeto actual
       var dates = [];
       var justDate = "";
-      var style = "";
+
+      // Organizar las fechas de los eventos
       catchup.events.forEach(function (event, index, array) {
         justDate = event.startDate.local().format('YYYY-MM-DD');
         if (dates.indexOf(justDate) < 0) {
-          dates.push(justDate);
+          dates.push(justDate); // Agregar la fecha si no está en la lista
         }
       });
 
+      // Ordenar las fechas de los eventos
       dates.sort(function (a, b) {
-        a = moment(a.startDate).utc(true);
-        b = moment(b.startDate).utc(true);
-        return a.startDate != null ? ((a.startDate > b.startDate) ? 1 : ((a.startDate < b.startDate) ? -1 : 0)) : 0;
+        a = moment(a).utc(true);
+        b = moment(b).utc(true);
+        return a.isBefore(b) ? -1 : (a.isAfter(b) ? 1 : 0);
       });
 
-      if (catchup.background != null && typeof catchup.background != 'undefined') {
-        style = " background-color: #" + catchup.background;
-      }
-      var cells = '<div class="channel-video focusable" data-id="' + catchup.epgStreamId + '" data-type="catchup" data-back="true" style="' + style + '">'
-        + '<img src="' + catchup.img + '" alt="">'
-        + '</div>';
-
-      dates.forEach(function (dateItem, index, array) {
-        cells += '<div class="channel-video focusable" data-id="' + catchup.epgStreamId + '" data-date="' + dateItem + '" data-type="catchup-date">'
-          + '<div><span>' + getDateFormatted(moment(dateItem)) + '</span></div>'
-          + '</div>';
+      // Crear los botones con las fechas
+      var buttons = "";
+      dates.forEach(function (dateItem) {
+        buttons += `
+          <button class="catchup-date-btn focusable" data-date="${dateItem}">
+            ${getDateFormatted(moment(dateItem))}
+          </button>
+        `;
       });
 
-      $("#catchupsRow").find(".row-catchups:first").addClass("hidden");
-      var $rowCatchupDates = $("#catchupsRow").find(".row-catchup-dates:first");
-      $rowCatchupDates.removeClass("hidden");
-      $rowCatchupDates.html(cells);
+      // Insertar los botones en el contenedor #catchupDateButtons
+      $("#catchupDateButtons").html(buttons);
+      $("#catchupDateButtons").removeClass("hidden");
 
-      // focus
-      var $focusTo = $rowCatchupDates.find(".focusable:first");
+      // Foco en el primer botón
+      var $focusTo = $("#catchupDateButtons").find(".focusable:first");
       Focus.to($focusTo);
       $focusTo.focus();
+
+      // Añadir el evento de clic para los botones de fecha
+      $(".catchup-date-btn").on("click", function () {
+        var selectedDate = $(this).data("date"); // Obtener la fecha seleccionada
+        self.openCatchupDate(catchup, selectedDate); // Llamar a la función para mostrar los eventos de esa fecha
+      });
     },
 
     openCatchupDate: function (catchup, dateString) {
+      // Filtrar los eventos de acuerdo con la fecha seleccionada
       var events = catchup.events.filter(function (event) {
         return event.startDate.local().format("YYYY-MM-DD") == dateString;
       });
 
-      if (catchup.background != null && typeof catchup.background != 'undefined') {
-        style = " background-color: #" + catchup.background;
-      }
-
-      if(CONFIG.app.brand === "jrmax") {
-        style = 'color:black';
-      }
-
-      var cells = '<div class="channel-video focusable" data-id="' + catchup.epgStreamId + '" data-type="catchup" data-back="true" style="' + style + '">'
-        + '<img src="' + catchup.img + '" alt="">'
-        + '</div>'
-        + '<div class="channel-video focusable" data-id="' + catchup.epgStreamId + '" data-date="' + dateString + '" data-type="catchup-date" data-back="true">'
-        + '<div><span>' + getDateFormatted(moment(dateString)) + '</span></div>'
-        + '</div>';
-      var config = Storage.get("cvClientConfig");
-      var objetoConfig = JSON.parse(config);
-      var cdnServers = objetoConfig.cdnServers[3].urls[1];
-
-      events.forEach(function (event, index, array) {
-        var src
-        if (event.imageUrl != null || event.imageUrl != "null" || event.imageUrl != "") {
-          src = event.imageUrl
-        }
-        else if (event.imageUrl == null || event.imageUrl == "null" || event.imageUrl == "") {
-          src = cdnServers + "" + event.id + "/screenshot.jpg"
-        }
-        cells += '<div class="channel-video focusable" data-id="' + event.eventId + '" data-group="' + catchup.epgStreamId + '" data-type="catchup-event">'
-          + '<div style = "position: relative"><img src="' + src + '"onerror="imgOnError(this)" alt=""><span style = "position: absolute; top:0;" class="event">' + event.name + '</span><span style = "position: absolute; bottom:0;" class="event">' + getDateFormatted(event.startDate, true) + ' - ' + getDateFormatted(event.endDate, true) + '</span></div>'
-          + '</div>';
+      // Crear el contenido para los eventos de la fecha seleccionada
+      var cells = '';
+      events.forEach(function (event) {
+        var src = event.imageUrl ? event.imageUrl : "path_to_default_image"; // Manejar la imagen del evento
+        cells += `
+          <div class="catchup-event-item">
+            <img src="${src}" alt="${event.name}">
+            <div class="catchup-event-details">
+              <span class="event-name">${event.name}</span>
+              <span class="event-time">${getDateFormatted(event.startDate, true)} - ${getDateFormatted(event.endDate, true)}</span>
+            </div>
+          </div>
+        `;
       });
-      $("#catchupsRow").find(".row-catchup-dates:first").addClass("hidden");
-      var $rowCatchupEvents = $("#catchupsRow").find(".row-catchup-events:first");
-      $rowCatchupEvents.removeClass("hidden");
-      $rowCatchupEvents.html(cells);
 
-      // focus
-      var $focusTo = $rowCatchupEvents.find(".focusable[data-date='" + dateString + "']:first");
-      Focus.to($focusTo);
-      $focusTo.focus();
+      // Insertar los eventos filtrados en el contenedor #catchupEventList
+      $("#catchupEventList").html(cells);
+      $("#catchupEventList").removeClass("hidden");
     },
+
+
+    // Función para mostrar los eventos de la fecha seleccionada
+    showCatchupEventsForDate: function (catchup, dateString) {
+      var events = catchup.events.filter(function (event) {
+        return event.startDate.local().format("YYYY-MM-DD") == dateString;
+      });
+
+      // Si no hay eventos para la fecha seleccionada
+      if (events.length === 0) {
+        $("#catchupEventList").html('<p>No hay eventos para esta fecha.</p>');
+        return;
+      }
+
+      // Crear el contenido para los eventos de la fecha seleccionada
+      var cells = '';
+      events.forEach(function (event) {
+        var src = event.imageUrl ? event.imageUrl : "path_to_default_image"; // Manejar la imagen del evento
+        cells += `
+          <div class="catchup-event-item">
+            <img src="${src}" alt="${event.name}">
+            <div class="catchup-event-details">
+              <span class="event-name">${event.name}</span>
+              <span class="event-time">${getDateFormatted(event.startDate, true)} - ${getDateFormatted(event.endDate, true)}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      // Insertar los eventos filtrados en el contenedor #catchupEventList
+      $("#catchupEventList").html(cells);
+      $("#catchupEventList").removeClass("hidden");
+    }
+    ,
+
+
+    // openCatchupCell: function (catchup) {
+    //   // prepare dates
+    //   var dates = [];
+    //   var justDate = "";
+    //   var style = "";
+    //   catchup.events.forEach(function (event, index, array) {
+    //     justDate = event.startDate.local().format('YYYY-MM-DD');
+    //     if (dates.indexOf(justDate) < 0) {
+    //       dates.push(justDate);
+    //     }
+    //   });
+
+    //   dates.sort(function (a, b) {
+    //     a = moment(a.startDate).utc(true);
+    //     b = moment(b.startDate).utc(true);
+    //     return a.startDate != null ? ((a.startDate > b.startDate) ? 1 : ((a.startDate < b.startDate) ? -1 : 0)) : 0;
+    //   });
+
+    //   if (catchup.background != null && typeof catchup.background != 'undefined') {
+    //     style = " background-color: #" + catchup.background;
+    //   }
+    //   var cells = '<div class="channel-video focusable" data-id="' + catchup.epgStreamId + '" data-type="catchup" data-back="true" style="' + style + '">'
+    //     + '<img src="' + catchup.img + '" alt="">'
+    //     + '</div>';
+
+    //   dates.forEach(function (dateItem, index, array) {
+    //     cells += '<div class="channel-video focusable" data-id="' + catchup.epgStreamId + '" data-date="' + dateItem + '" data-type="catchup-date">'
+    //       + '<div><span>' + getDateFormatted(moment(dateItem)) + '</span></div>'
+    //       + '</div>';
+    //   });
+
+    //   $("#catchupsRow").find(".row-catchups:first").addClass("hidden");
+    //   var $rowCatchupDates = $("#catchupsRow").find(".row-catchup-dates:first");
+    //   $rowCatchupDates.removeClass("hidden");
+    //   $rowCatchupDates.html(cells);
+
+    //   // focus
+    //   var $focusTo = $rowCatchupDates.find(".focusable:first");
+    //   Focus.to($focusTo);
+    //   $focusTo.focus();
+    // },
+
+    // openCatchupDate: function (catchup, dateString) {
+    //   var events = catchup.events.filter(function (event) {
+    //     return event.startDate.local().format("YYYY-MM-DD") == dateString;
+    //   });
+
+    //   if (catchup.background != null && typeof catchup.background != 'undefined') {
+    //     style = " background-color: #" + catchup.background;
+    //   }
+
+    //   if(CONFIG.app.brand === "jrmax") {
+    //     style = 'color:black';
+    //   }
+
+    //   var cells = '<div class="channel-video focusable" data-id="' + catchup.epgStreamId + '" data-type="catchup" data-back="true" style="' + style + '">'
+    //     + '<img src="' + catchup.img + '" alt="">'
+    //     + '</div>'
+    //     + '<div class="channel-video focusable" data-id="' + catchup.epgStreamId + '" data-date="' + dateString + '" data-type="catchup-date" data-back="true">'
+    //     + '<div><span>' + getDateFormatted(moment(dateString)) + '</span></div>'
+    //     + '</div>';
+    //   var config = Storage.get("cvClientConfig");
+    //   var objetoConfig = JSON.parse(config);
+    //   var cdnServers = objetoConfig.cdnServers[3].urls[1];
+
+    //   events.forEach(function (event, index, array) {
+    //     var src
+    //     if (event.imageUrl != null || event.imageUrl != "null" || event.imageUrl != "") {
+    //       src = event.imageUrl
+    //     }
+    //     else if (event.imageUrl == null || event.imageUrl == "null" || event.imageUrl == "") {
+    //       src = cdnServers + "" + event.id + "/screenshot.jpg"
+    //     }
+    //     cells += '<div class="channel-video focusable" data-id="' + event.eventId + '" data-group="' + catchup.epgStreamId + '" data-type="catchup-event">'
+    //       + '<div style = "position: relative"><img src="' + src + '"onerror="imgOnError(this)" alt=""><span style = "position: absolute; top:0;" class="event">' + event.name + '</span><span style = "position: absolute; bottom:0;" class="event">' + getDateFormatted(event.startDate, true) + ' - ' + getDateFormatted(event.endDate, true) + '</span></div>'
+    //       + '</div>';
+    //   });
+    //   $("#catchupsRow").find(".row-catchup-dates:first").addClass("hidden");
+    //   var $rowCatchupEvents = $("#catchupsRow").find(".row-catchup-events:first");
+    //   $rowCatchupEvents.removeClass("hidden");
+    //   $rowCatchupEvents.html(cells);
+
+    //   // focus
+    //   var $focusTo = $rowCatchupEvents.find(".focusable[data-date='" + dateString + "']:first");
+    //   Focus.to($focusTo);
+    //   $focusTo.focus();
+    // },
 
     setVODContent: function (categories) {
       var vodsCount = 0;
