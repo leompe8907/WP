@@ -78,6 +78,7 @@ var CONFIG_BRANDS = [
     showTime: true,
     epgLineColorTime: "#2CE308",
     developedBy: "Network Broadcast",
+    miniPlayerEnabled: false
   },
   {
     brand: "bromteckarg",

@@ -79,6 +79,7 @@ Scene_Home = (function (Scene) {
       $(".epg-message").html(__("EPGLoading"));
       EPG.homeObject = this;
       VOD.homeObject = this;
+      VODDetail.homeObject = this;
       nbPlayer.homeObject = this;
 
       if (!CONFIG.app.showTime) {
@@ -180,7 +181,7 @@ Scene_Home = (function (Scene) {
       if (nbPlayer.isPlaying()) {
         var self = this;
         var $container = nbPlayer.isFullscreen() ? nbPlayer.$mainVideo : $(".common:first");
-        InactivityManager.appStatusAction($container, function () {
+        InactivityManager.appStatusAction($container, function() {
           nbPlayer.stopPlayer(true);
         }, function () {
           if (!nbPlayer.isFullscreen() && self.$lastFocused) {
@@ -315,7 +316,7 @@ Scene_Home = (function (Scene) {
     getDataForServicesTV: function () {
       var self = this;
       this.updateStepLoad(0);
-      AppData.getDataForServicesTV(function (bouquets) {
+      AppData.getDataForServicesTV(function(bouquets) {
         self.setBouquetsContent(bouquets);
         self.getDataForCatchups();
       });
@@ -645,7 +646,17 @@ Scene_Home = (function (Scene) {
         Focus.to(self.$lastFocused);
         return;
       }
-      if (ParentalControlDlg.isShowed()) {
+
+      if ($el.isInAlertConfirm(this.$el)) {
+        $el.closeAlert(this.$el);
+        Focus.to(this.$lastFocused);
+      } else if ($el.isInAlertMessage(this.$el)) {
+        $el.closeAlert(this.$el);
+        Focus.to(this.$lastFocused);
+      } else if ($el.isInAlertInput(this.$el)) {
+        $el.closeAlert(this.$el);
+        Focus.to(this.$lastFocused);
+      } else if (ParentalControlDlg.isShowed()) {
         ParentalControlDlg.close(ParentalControlDlg.cancelActions);
       } else if (InactivityManager.isShown()) {
         InactivityManager.continueWatching();
@@ -671,15 +682,6 @@ Scene_Home = (function (Scene) {
         VODDetail.onReturn(function () {
           Focus.to(self.$lastFocused);
         });
-      } else if ($el.isInAlertConfirm(this.$el)) {
-        $el.closeAlert(this.$el);
-        Focus.to(this.$lastFocused);
-      } else if ($el.isInAlertMessage(this.$el)) {
-        $el.closeAlert(this.$el);
-        Focus.to(this.$lastFocused);
-      } else if ($el.isInAlertInput(this.$el)) {
-        $el.closeAlert(this.$el);
-        Focus.to(this.$lastFocused);
       } else {
 
         if (CONFIG.app.brand == "fotelka" || CONFIG.app.brand == "supercabo" || CONFIG.app.brand == "cablesatelite") {
@@ -753,10 +755,9 @@ Scene_Home = (function (Scene) {
 
       // Evento al enfocar
       $input.on("focus", function () {
-          console.log("📝 Input enfocado");
-          if ($input.val().trim() === "Buscar...") {
-              $input.val("");
-          }
+        if ($input.val().trim() === __("CustomSearch")) {
+          $input.val(""); // Limpia el texto inicial traducido
+        }
       });
 
       // Evento al escribir en el input
@@ -771,9 +772,9 @@ Scene_Home = (function (Scene) {
 
       // Evento al desenfocar
       $input.on("blur", function () {
-          if ($input.val().trim() === "") {
-              $input.val("Buscar...");
-          }
+        if ($input.val().trim() === "") {
+          $input.val(__("CustomSearch")); // Restaura el texto traducido si está vacío
+        }
       });
 
       // Forzar eventos click para los resultados (por si no pasan por onClick)
@@ -830,6 +831,8 @@ Scene_Home = (function (Scene) {
           return catchup.name.toLowerCase().indexOf(query) !== -1;
         }));
       }
+
+      console.log("Resultados de búsqueda en LG:", results); // Debugging
       this.renderSearchResults(results);
     },
 
@@ -883,7 +886,7 @@ Scene_Home = (function (Scene) {
           this.playContentWithAccess("service", service.id, service.url, service, true, false);
         }
       } else if (type === "vod") {
-        VODDetail.show(id, null, this)
+        VODDetail.show(id, null,this)
       } else if (type === "catchup") {
         AppData.getTopLevelCatchupM3u8Url(id, function (url) {
           if (url) {
@@ -905,10 +908,11 @@ Scene_Home = (function (Scene) {
 
     // Ocultar el buscador
     hideSearchPanel: function () {
-      $("#searchContainer").addClass("hidden");
-      $("#customSearchInput").val(""); // Limpiar el contenido del input
-      $("#searchResults").empty(); // Limpiar los resultados
+      $("#searchContainer").addClass("hidden"); // Oculta el contenedor del buscador
+      $("#customSearchInput").val(""); // Limpia el campo de entrada de búsqueda
+      $("#searchResults").empty(); // Limpia los resultados
       $("#viewport").removeClass("no-scroll");
+      Focus.to(null); // Limpia el foco actual
     },
 
 
@@ -1002,7 +1006,53 @@ Scene_Home = (function (Scene) {
         return;
       }
 
-      if (nbPlayer.isFullscreen()) {
+      if ($el.isInAlertMessage(this.$el)) {
+        $el.closeAlert(this.$el);
+        Focus.to(this.$lastFocused);
+        return;
+      } else if ($el.isInAlertConfirm(this.$el)) {
+        var tag = $el.data("tag");
+        if (typeof tag != 'undefined' && tag != null && tag.length > 0) {
+          if (tag == "license_already_in_use") {
+            this.activateLicense($el.is(this.$nbAlertConfirmOkButton));
+            $el.closeAlert(this.$el);
+            Focus.to(this.$videoContainer);
+            return;
+          } else if (tag == "MoviesContinuePlayback") {
+            if ($el.is(this.$nbAlertConfirmOkButton)) {
+              var timeResume = User.getVideoHistoryFor(this.playbackMetadata.type, this.playbackMetadata.id);
+              nbPlayer.$player.currentTime(timeResume);
+            }
+            nbPlayer.$player.play();
+            $el.closeAlert(this.$el);
+            this.goToFullscreen();
+            return;
+          } else if (tag == "LoginLogoutConfirm") {
+            if ($el.is(this.$nbAlertConfirmOkButton)) {
+              $el.closeAlert(this.$el);
+              cv.logout(function () {
+                self.destroyScene();
+              });
+              return;
+            } else {
+              $el.closeAlert(this.$el);
+              Focus.to(this.$lastFocused);
+            }
+          }
+        }
+
+        if ($el.is(this.$nbAlertConfirmOkButton)) {
+          $el.closeAlert(this.$el);
+          closeApp();
+        } else {
+          $el.closeAlert(this.$el);
+          Focus.to(this.$lastFocused);
+        }
+        return;
+      } else if (NBAlert.isInAlertInput(this.$el)) {
+        NBAlert.enter(this);
+        return;
+      } else if (nbPlayer.isFullscreen()) {
         if ($el.hasClass('video-container')) {
           return false;
         }
@@ -1156,50 +1206,6 @@ Scene_Home = (function (Scene) {
           Focus.to($(".exitFullscreenBtn"));
           $(".exitFullscreenBtn").focus();
         }
-      } else if ($el.isInAlertMessage(this.$el)) {
-        $el.closeAlert(this.$el);
-        Focus.to(this.$lastFocused);
-      } else if ($el.isInAlertConfirm(this.$el)) {
-        var tag = $el.data("tag");
-        if (typeof tag != 'undefined' && tag != null && tag.length > 0) {
-          if (tag == "license_already_in_use") {
-            this.activateLicense($el.is(this.$nbAlertConfirmOkButton));
-            $el.closeAlert(this.$el);
-            Focus.to(this.$videoContainer);
-            return;
-          } else if (tag == "MoviesContinuePlayback") {
-            if ($el.is(this.$nbAlertConfirmOkButton)) {
-              var timeResume = User.getVideoHistoryFor(this.playbackMetadata.type, this.playbackMetadata.id);
-              nbPlayer.$player.currentTime(timeResume);
-            }
-            nbPlayer.$player.play();
-            $el.closeAlert(this.$el);
-            this.goToFullscreen();
-            return;
-          } else if (tag == "LoginLogoutConfirm") {
-            if ($el.is(this.$nbAlertConfirmOkButton)) {
-              $el.closeAlert(this.$el);
-              cv.logout(function () {
-                self.destroyScene();
-              });
-              return;
-            } else {
-              $el.closeAlert(this.$el);
-              Focus.to(this.$lastFocused);
-            }
-          }
-        }
-
-        if ($el.is(this.$nbAlertConfirmOkButton)) {
-          $el.closeAlert(this.$el);
-          closeApp();
-        } else {
-          $el.closeAlert(this.$el);
-          Focus.to(this.$lastFocused);
-        }
-      } else if (NBAlert.isInAlertInput(this.$el)) {
-        NBAlert.enter(this);
-        return;
       }
     },
 
@@ -1256,7 +1262,7 @@ Scene_Home = (function (Scene) {
 
 
       // Verifica si el buscador esta activo
-      if (!$("#searchContainer").hasClass("hidden")) {
+      if(!$("#searchContainer").hasClass("hidden")){
         $("#viewport").addClass("no-scroll"); // Bloquea el scroll
         event.preventDefault(); // Evita que las teclas afecten la pantalla principal
 
@@ -1456,17 +1462,17 @@ Scene_Home = (function (Scene) {
         $("#viewport").removeClass("no-scroll"); // Restaura el scroll cuando el teclado se cierra
       }
 
-      if (nbPlayer.isFullscreen()) {
-        nbPlayer.navigate($el, direction);
-        return;
-      } else if (ParentalControlDlg.isShowed()) {
-        ParentalControlDlg.navigate(direction);
-        return;
-      } else if ($el.isInAlertMessage(this.$el) || $el.isInAlertConfirm(this.$el)) { // navigate on dialog
+      if ($el.isInAlertMessage(this.$el) || $el.isInAlertConfirm(this.$el)) { // navigate on dialog
         this.manageFocusOnAlert(direction, $el.data("parent-type"));
         return;
       } else if (NBAlert.isInAlertInput(this.$el)) {
         NBAlert.navigate(direction, $el.data("parent-type"));
+        return;
+      } else if (nbPlayer.isFullscreen()) {
+        nbPlayer.navigate($el, direction);
+        return;
+      } else if (ParentalControlDlg.isShowed()) {
+        ParentalControlDlg.navigate(direction);
         return;
       }
 
@@ -1716,16 +1722,17 @@ Scene_Home = (function (Scene) {
       if (data.length > 0) {
         data.forEach(function(catchup, index) {
           if (catchup.events != null && catchup.events.length > 0) {
-            // Crear elemento HTML para cada canal
+            var style = "";
+            if (catchup.background != null && typeof catchup.background != 'undefined') {
+              style = " background-color: #" + catchup.background;
+            }
             rows += `
               <div class="focusable clickable channel-item"
-                   data-id="${catchup.epgStreamId}"
-                   data-type="catchup"
-                   tabindex="0"
-                   role="button"
-                   aria-label="Ver programas de ${catchup.name}">
+                data-id="${catchup.epgStreamId}"
+                data-type="catchup"
+                style="${style}">
                 <img class="catchup-img" src="${catchup.img}" alt="${catchup.name}">
-                <div class="catchup-title">${catchup.name}</div>
+                <div class="catchup-title" style="color:black">${catchup.name}</div>
               </div>
             `;
           }
@@ -1823,7 +1830,7 @@ Scene_Home = (function (Scene) {
     },
 
     openCatchupCell: function (catchup) {
-      var self = this;  // Definir self para hacer referencia al objeto actual
+      var self = this;
       var dates = [];
       var justDate = "";
 
@@ -1837,9 +1844,9 @@ Scene_Home = (function (Scene) {
 
       // Ordenar las fechas de los eventos
       dates.sort(function (a, b) {
-        a = moment(a).utc(true);
-        b = moment(b).utc(true);
-        return a.isBefore(b) ? -1 : (a.isAfter(b) ? 1 : 0);
+        a = moment(a.startDate).utc(true);
+        b = moment(b.startDate).utc(true);
+        return a.startDate != null ? ((a.startDate > b.startDate) ? 1 : ((a.startDate < b.startDate) ? -1 : 0)) : 0;
       });
 
       // Crear los botones con las fechas
@@ -1874,13 +1881,28 @@ Scene_Home = (function (Scene) {
         return event.startDate.local().format("YYYY-MM-DD") == dateString;
       });
 
+      // Organizar las fechas de los eventos
+      var style = "";
+
+
+      if (catchup.background != null && typeof catchup.background != 'undefined') {
+        style = " background-color: #" + catchup.background;
+      }
+
       // Crear el contenido para los eventos de la fecha seleccionada
       var cells = '';
       events.forEach(function (event) {
-        var src = event.imageUrl ? event.imageUrl : "path_to_default_image"; // Manejar la imagen del evento
+        var src
+        if (event.imageUrl != null || event.imageUrl != "null" || event.imageUrl != "") {
+          src = event.imageUrl
+        }
+        else if (event.imageUrl == null || event.imageUrl == "null" || event.imageUrl == "") {
+          src = cdnServers + "" + event.id + "/screenshot.jpg"
+        }
+
         cells += `
-          <div class="catchup-event-item">
-            <img src="${src}" alt="${event.name}">
+          <div class="catchup-event-item style=${style} ">
+            <img src="${src}" onerror="imgOnError(this)" alt="${event.name}">
             <div class="catchup-event-details">
               <span class="event-name">${event.name}</span>
               <span class="event-time">${getDateFormatted(event.startDate, true)} - ${getDateFormatted(event.endDate, true)}</span>
@@ -1894,47 +1916,6 @@ Scene_Home = (function (Scene) {
       $("#catchupEventList").removeClass("hidden");
     },
 
-    // openCatchupCell: function (catchup) {
-    //   // prepare dates
-    //   var dates = [];
-    //   var justDate = "";
-    //   var style = "";
-    //   catchup.events.forEach(function (event, index, array) {
-    //     justDate = event.startDate.local().format('YYYY-MM-DD');
-    //     if (dates.indexOf(justDate) < 0) {
-    //       dates.push(justDate);
-    //     }
-    //   });
-
-    //   dates.sort(function (a, b) {
-    //     a = moment(a.startDate).utc(true);
-    //     b = moment(b.startDate).utc(true);
-    //     return a.startDate != null ? ((a.startDate > b.startDate) ? 1 : ((a.startDate < b.startDate) ? -1 : 0)) : 0;
-    //   });
-
-    //   if (catchup.background != null && typeof catchup.background != 'undefined') {
-    //     style = " background-color: #" + catchup.background;
-    //   }
-    //   var cells = '<div class="channel-video focusable" data-id="' + catchup.epgStreamId + '" data-type="catchup" data-back="true" style="' + style + '">'
-    //     + '<img src="' + catchup.img + '" alt="">'
-    //     + '</div>';
-
-    //   dates.forEach(function (dateItem, index, array) {
-    //     cells += '<div class="channel-video focusable" data-id="' + catchup.epgStreamId + '" data-date="' + dateItem + '" data-type="catchup-date">'
-    //       + '<div><span>' + getDateFormatted(moment(dateItem)) + '</span></div>'
-    //       + '</div>';
-    //   });
-
-    //   $("#catchupsRow").find(".row-catchups:first").addClass("hidden");
-    //   var $rowCatchupDates = $("#catchupsRow").find(".row-catchup-dates:first");
-    //   $rowCatchupDates.removeClass("hidden");
-    //   $rowCatchupDates.html(cells);
-
-    //   // focus
-    //   var $focusTo = $rowCatchupDates.find(".focusable:first");
-    //   Focus.to($focusTo);
-    //   $focusTo.focus();
-    // },
 
     // openCatchupDate: function (catchup, dateString) {
     //   var events = catchup.events.filter(function (event) {
@@ -2048,7 +2029,7 @@ Scene_Home = (function (Scene) {
         headingStyle = "style='width: 15em; border-top: 2px solid; border-bottom: 2px solid; border-right: 2px solid; border-radius: 0px 15px 15px 0px; border-color:orange'";
       }
 
-      if (CONFIG.app.brand === "jrmax") {
+      if(CONFIG.app.brand === "jrmax") {
         headingStyle = "style='color:black'";
       }
 
@@ -2655,9 +2636,10 @@ Scene_Home = (function (Scene) {
     },
 
     licenseEnded: function () {
-      if (nbPlayer.isFullscreen()) {
-        this.onReturnFullscreen();
-      }
+      //Exit from fullscreen removed to avoid issues when license is lost
+      // if (nbPlayer.isFullscreen()) {
+      //   this.onReturnFullscreen();
+      // }
       this.NBPLAYER_RETRY_AFTER_ERROR = false;
       var self = this;
       NbNetworkObserver.simpleCheckInternetConnection(function () {
@@ -2786,6 +2768,7 @@ Scene_Home = (function (Scene) {
       this.clearData();
       Router.clearHistory();
       Router.go('login');
+      Scene_Login.prototype.showForm("", "", true, true);
     },
 
     playNextCatchup: function (currentEventId) {

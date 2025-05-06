@@ -233,7 +233,7 @@ Scene_Licenses = (function (Scene) {
     },
 
     setResponseStreamingLicenses: function (licenses) {
-      this.licenses = licenses;
+      this.licenses = User.getLicenses(); //licenses are already stored in user data
 
       if (CONFIG.automaticActivation) {
         this.autoActivateLicense(0);

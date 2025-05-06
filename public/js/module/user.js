@@ -97,6 +97,9 @@ User = (function (Events) {
     },
 
     getLicenses: function () {
+      // return JSON.parse(Storage.get("licenses")).filter(function(l) {
+      //   return l.key == "4001619278" || l.key == "4001619279"; // || l.key == "4001792913";
+      // });
       return JSON.parse(Storage.get("licenses"));
     },
 

@@ -157,31 +157,28 @@ App = (function (Events, Deferrable) {
         if (User.hasCredentials()) {
           var user = User.getUsername();
           var password = User.getPassword();
+          var licenses = User.getLicenses();
+          var license = User.getLicense();
+          var pin = User.getLicensePin();
+          var hasLicenseCredentials = User.hasCredentialsLicense();
 
+          //show login form
           Router.go('login');
           Scene_Login.prototype.showForm(user, password, true, false);
 
-          cv.clientLogin(user, password, true, function () {
-            cv.getClientConfig(function () {
-              if (User.hasCredentialsLicense()) {
-                var license = User.getLicense();
-                var pin = User.getLicensePin();
-                cv.activateStreamingLicense(license, pin, false, function () {
-                  console.log("Go to home with all data (user, config and license activated)");
-                  Router.go('home');
-                }, function () {
-                  console.log("Go to licenses with user and config (pending license)");
-                  Router.go('licenses');
-                });
-              } else {
-                Router.go('licenses');
-              }
-            }, function () {
-              console.log("Has user but pending config and license. Go to Login");
-              Scene_Login.prototype.showForm('', '', false, true);
-            });
-          }, function (result) {
+          //configure login helper options
+          LoginHelper.configure(licenses, true, true);
+
+          //call login helper to login and activate current license
+          LoginHelper.loginAndActivateLicense(user, password, true, hasLicenseCredentials, license, pin, function() {
+            console.log("Login failure");
             Scene_Login.prototype.showForm('', '', false, true);
+          }, function() {
+            console.log("Go to home with all data (user, config and license activated)");
+            Router.go('home');
+          }, function() {
+            console.log("Go to licenses with user and config (pending license)");
+            Router.go('licenses');
           });
         } else {
           Router.go('login');

@@ -132,14 +132,21 @@ Scene_Activation = (function (Scene) {
       var pin = $("#txtLicensePin").val();
       // var pin = this.input.$el.val();
       var self = this;
-      var failIfInUse = true;
+      var failIfInUse = false;
 
       if (pin.length > 0) {
-        cv.activateStreamingLicense(self.license, pin, failIfInUse, function () {
+        // cv.activateStreamingLicense(self.license, pin, failIfInUse, function () {
+        //   Router.go("home");
+        // }, function (error) {
+        //   console.log("Error activation license " + self.license + " with pin " + pin + ". Error: " + error);
+        //   self.$el.showAlertMessage(__("SettingsErrorActivationMessage").replace("%s", self.license));
+        // });
+        LoginHelper.configure([], false, failIfInUse);
+        LoginHelper.activateLicense(this.license, pin, -1, function () { //sucessfull
           Router.go("home");
-        }, function () {
-          console.log("Error activation license " + self.license + " with pin " + pin);
-          showAlertMessage(__("SettingsErrorActivationMessage").replace("%s", self.license));
+        }, function () { //failure
+          console.log("Error activation license " + self.license + " with pin " + pin + ". Error: " + error);
+          self.$el.showAlertMessage(__("SettingsErrorActivationMessage").replace("%s", self.license));
         });
       }
 
