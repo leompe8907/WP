@@ -1706,29 +1706,70 @@ Scene_Home = (function (Scene) {
       }
     },
 
-    setCatchupsContent: function (data) {
-      console.log(data);
+    setCatchupsContent: function(data) {
+      var self = this;
+      var rows = "";
+
+      // Limpiar contenedor primero
+      $("#catchupChannelList").empty();
+
       if (data.length > 0) {
-        var rows = ""; // Aquí se generarán los canales de los catchups
-        data.forEach(function (catchup, index, array) {
+        data.forEach(function(catchup, index) {
           if (catchup.events != null && catchup.events.length > 0) {
-            // Cada catchup se renderiza como un canal
+            // Crear elemento HTML para cada canal
             rows += `
-              <div class="focusable" data-id="${catchup.epgStreamId}" data-type="catchup">
+              <div class="focusable clickable channel-item"
+                   data-id="${catchup.epgStreamId}"
+                   data-type="catchup"
+                   tabindex="0"
+                   role="button"
+                   aria-label="Ver programas de ${catchup.name}">
+                <img class="catchup-img" src="${catchup.img}" alt="${catchup.name}">
                 <div class="catchup-title">${catchup.name}</div>
               </div>
             `;
           }
         });
 
-        // Insertamos los canales directamente en el div de catchupChannelList
+        // Insertar canales en el contenedor
         $("#catchupChannelList").html(rows);
         $("#catchupChannelList").removeClass("hidden");
 
+        // Asignar eventos para mouse y teclado
+        this.setupChannelInteractions();
+
+        // Actualizar título
         $("#menuCatchupModalLabel").html(__("MenuCatchups"));
       } else {
         $("#catchupChannelList").addClass("hidden");
       }
+    },
+
+    // Nueva función para manejar interacciones
+    setupChannelInteractions: function() {
+      var self = this;
+
+      // Manejar clics con mouse
+      $("#catchupChannelList").off("click", ".channel-item").on("click", ".channel-item", function(e) {
+        var channelId = $(this).data("id");
+        var catchup = AppData.getCatchup(channelId);
+        if (catchup) {
+          self.openCatchupCell(catchup);
+        }
+        e.stopPropagation();
+      });
+
+      // Manejar tecla Enter (para navegación con teclado)
+      $("#catchupChannelList").off("keydown", ".channel-item").on("keydown", ".channel-item", function(e) {
+        if (e.key === "Enter") {
+          var channelId = $(this).data("id");
+          var catchup = AppData.getCatchup(channelId);
+          if (catchup) {
+            self.openCatchupCell(catchup);
+          }
+          e.preventDefault();
+        }
+      });
     },
 
 
@@ -1852,41 +1893,6 @@ Scene_Home = (function (Scene) {
       $("#catchupEventList").html(cells);
       $("#catchupEventList").removeClass("hidden");
     },
-
-
-    // Función para mostrar los eventos de la fecha seleccionada
-    showCatchupEventsForDate: function (catchup, dateString) {
-      var events = catchup.events.filter(function (event) {
-        return event.startDate.local().format("YYYY-MM-DD") == dateString;
-      });
-
-      // Si no hay eventos para la fecha seleccionada
-      if (events.length === 0) {
-        $("#catchupEventList").html('<p>No hay eventos para esta fecha.</p>');
-        return;
-      }
-
-      // Crear el contenido para los eventos de la fecha seleccionada
-      var cells = '';
-      events.forEach(function (event) {
-        var src = event.imageUrl ? event.imageUrl : "path_to_default_image"; // Manejar la imagen del evento
-        cells += `
-          <div class="catchup-event-item">
-            <img src="${src}" alt="${event.name}">
-            <div class="catchup-event-details">
-              <span class="event-name">${event.name}</span>
-              <span class="event-time">${getDateFormatted(event.startDate, true)} - ${getDateFormatted(event.endDate, true)}</span>
-            </div>
-          </div>
-        `;
-      });
-
-      // Insertar los eventos filtrados en el contenedor #catchupEventList
-      $("#catchupEventList").html(cells);
-      $("#catchupEventList").removeClass("hidden");
-    }
-    ,
-
 
     // openCatchupCell: function (catchup) {
     //   // prepare dates

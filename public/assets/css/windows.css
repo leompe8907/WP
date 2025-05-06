@@ -541,8 +541,28 @@
 
 /* catchup modal style */
 
+
+#catchupModal {
+  position: relative;  /* Asegura que el modal tenga un contexto para el botón de cierre */
+}
+
+#catchupModalCloseButton {
+  position: absolute;
+  top: 10px;  /* Ajusta la distancia desde la parte superior */
+  right: 10px;  /* Ajusta la distancia desde la derecha */
+  border: none;  /* Eliminar el borde del botón */
+  background: transparent;  /* Fondo transparente */
+  font-size: 1.5rem;  /* Tamaño del icono */
+  color: #fff;  /* Color blanco */
+  cursor: pointer;  /* Cambiar el cursor cuando pase por encima */
+}
+
+#catchupModalCloseButton:hover {
+  color: #f00;  /* Cambiar el color al pasar el mouse sobre el botón */
+}
+
 .catchup-modal {
-  position: fixed;
+  /* position: fixed; */
   top: 0;
   left: 0;
   width: 100vw;
