@@ -1863,10 +1863,11 @@ Scene_Home = (function (Scene) {
       $("#catchupDateButtons").html(buttons);
       $("#catchupDateButtons").removeClass("hidden");
 
-      // Foco en el primer botón
+      // **Foco en el primer botón
       var $focusTo = $("#catchupDateButtons").find(".focusable:first");
       Focus.to($focusTo);
       $focusTo.focus();
+
 
       // Añadir el evento de clic para los botones de fecha
       $(".catchup-date-btn").on("click", function () {
@@ -1886,7 +1887,8 @@ Scene_Home = (function (Scene) {
 
 
       if (catchup.background != null && typeof catchup.background != 'undefined') {
-        style = " background-color: #" + catchup.background;
+        //style = " background-color: #" + catchup.background;
+        style = " background-color: #000000";
       }
 
       // Crear el contenido para los eventos de la fecha seleccionada
@@ -1901,9 +1903,9 @@ Scene_Home = (function (Scene) {
         }
 
         cells += `
-          <div class="catchup-event-item style=${style} ">
-            <img src="${src}" onerror="imgOnError(this)" alt="${event.name}">
-            <div class="catchup-event-details">
+          <div class="catchup-event-item focusable" data-id="${event.eventId}" data-group="${catchup.epgStreamId}" data-type="catchup-event" style="${style}; width: 35%; box-sizing:border-box; margin: 10px; ">
+            <img src="${src}" style="width:100%; padding: 10px;" onerror="imgOnError(this)" alt="${event.name}">
+            <div class="catchup-event-details" style="text-align: center;">
               <span class="event-name">${event.name}</span>
               <span class="event-time">${getDateFormatted(event.startDate, true)} - ${getDateFormatted(event.endDate, true)}</span>
             </div>
