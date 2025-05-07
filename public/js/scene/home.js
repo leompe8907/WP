@@ -1714,66 +1714,62 @@ Scene_Home = (function (Scene) {
 
     setCatchupsContent: function(data) {
       var self = this;
-      var rows = "";
-
-      // Limpiar contenedor primero
       $("#catchupChannelList").empty();
 
       if (data.length > 0) {
-        data.forEach(function(catchup, index) {
-          if (catchup.events != null && catchup.events.length > 0) {
-            var style = "";
-            if (catchup.background != null && typeof catchup.background != 'undefined') {
-              style = " background-color: #" + catchup.background;
-            }
-            rows += `
+        data.forEach(function(catchup) {
+          if (catchup.events && catchup.events.length > 0) {
+            var style = catchup.background ? "background-color: #" + catchup.background : "";
+            var firstDate = catchup.events[0].startDate.local().format('YYYY-MM-DD');
+
+            $("#catchupChannelList").append(`
               <div class="focusable clickable channel-item"
                 data-id="${catchup.epgStreamId}"
+                data-date="${firstDate}"
                 data-type="catchup"
                 style="${style}">
                 <img class="catchup-img" src="${catchup.img}" alt="${catchup.name}">
                 <div class="catchup-title" style="color:black">${catchup.name}</div>
               </div>
-            `;
+            `);
           }
         });
 
-        // Insertar canales en el contenedor
-        $("#catchupChannelList").html(rows);
-        $("#catchupChannelList").removeClass("hidden");
-
-        // Asignar eventos para mouse y teclado
         this.setupChannelInteractions();
-
-        // Actualizar título
-        $("#menuCatchupModalLabel").html(__("MenuCatchups"));
-      } else {
-        $("#catchupChannelList").addClass("hidden");
+        $("#catchupChannelList").removeClass("hidden");
       }
     },
 
     // Nueva función para manejar interacciones
-    setupChannelInteractions: function() {
+    setupChannelInteractions: function () {
       var self = this;
 
-      // Manejar clics con mouse
-      $("#catchupChannelList").off("click", ".channel-item").on("click", ".channel-item", function(e) {
+      // Click mouse
+      $("#catchupChannelList").on("click", ".channel-item", function (e) {
         var channelId = $(this).data("id");
         var catchup = AppData.getCatchup(channelId);
+        var firstDate = $(this).data("date");
+
         if (catchup) {
-          self.openCatchupCell(catchup);
+          self.openCatchupCell(catchup);                    // <-- muestra los botones
+          self.openCatchupDate(catchup, firstDate);         // <-- carga automáticamente los eventos
         }
+
         e.stopPropagation();
       });
 
-      // Manejar tecla Enter (para navegación con teclado)
-      $("#catchupChannelList").off("keydown", ".channel-item").on("keydown", ".channel-item", function(e) {
+      // Tecla Enter
+      $("#catchupChannelList").on("keydown", ".channel-item", function (e) {
         if (e.key === "Enter") {
           var channelId = $(this).data("id");
           var catchup = AppData.getCatchup(channelId);
+          var firstDate = $(this).data("date");
+
           if (catchup) {
-            self.openCatchupCell(catchup);
+            self.openCatchupCell(catchup);                  // <-- muestra los botones
+            self.openCatchupDate(catchup, firstDate);       // <-- carga automáticamente los eventos
           }
+
           e.preventDefault();
         }
       });
