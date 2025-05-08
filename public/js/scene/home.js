@@ -945,7 +945,6 @@ Scene_Home = (function (Scene) {
 
         // Cargar los datos de Catchups si no están cargados
         if ($("#catchupModalContent").children().length === 0) {
-            self.getDataForCatchups();
             const $catchupsRow = $("#catchupsRow").detach();  // Desconecta el contenido
             $("#catchupModalContent").append($catchupsRow);    // Lo agrega al modal
             $catchupsRow.removeClass("hidden");                // Muestra el contenido
@@ -1889,6 +1888,9 @@ Scene_Home = (function (Scene) {
 
       // Crear el contenido para los eventos de la fecha seleccionada
       var cells = '';
+      var config = Storage.get("cvClientConfig");
+      var objetoConfig = JSON.parse(config);
+      var cdnServers = objetoConfig.cdnServers[3].urls[1];
       events.forEach(function (event) {
         var src
         if (event.imageUrl != null || event.imageUrl != "null" || event.imageUrl != "") {
@@ -1899,8 +1901,8 @@ Scene_Home = (function (Scene) {
         }
 
         cells += `
-          <div class="catchup-event-item focusable" data-id="${event.eventId}" data-group="${catchup.epgStreamId}" data-type="catchup-event" style="${style}; width: 35%; box-sizing:border-box; margin: 10px; ">
-            <img src="${src}" style="width:100%; padding: 10px;" onerror="imgOnError(this)" alt="${event.name}">
+          <div class="catchup-event-item focusable" data-id="${event.eventId}" data-group="${catchup.epgStreamId}" data-type="catchup" style="${style};" onclick="HOME.playCatchupEvent('${event.eventId}', '${catchup.epgStreamId}')">
+            <img src="${src}" style="width:100%;padding: 10px;border-radius: 50px;" onerror="imgOnError(this)" alt="${event.name}">
             <div class="catchup-event-details" style="text-align: center;">
               <span class="event-name">${event.name}</span>
               <span class="event-time">${getDateFormatted(event.startDate, true)} - ${getDateFormatted(event.endDate, true)}</span>
@@ -1912,6 +1914,30 @@ Scene_Home = (function (Scene) {
       // Insertar los eventos filtrados en el contenedor #catchupEventList
       $("#catchupEventList").html(cells);
       $("#catchupEventList").removeClass("hidden");
+
+      //this.setupChannelInteractionsEvents();
+    },
+
+    playCatchupEvent: function(eventId, groupId) {
+      var self = this;
+      var catchup = AppData.getCatchupByEventId(eventId);
+
+      // Si no lo encuentra, intentá usar groupId
+      if (!catchup || catchup === false) {
+        catchup = AppData.getCatchupEvent(groupId, eventId);
+      }
+
+      console.log("Catchup event resolved: ", catchup);
+
+      if (catchup) {
+        AppData.getTopLevelCatchupM3u8Url(catchup.id, function (url) {
+          if (url) {
+            self.playContentWithAccess("catchup-event", eventId, url, catchup, true, false);
+          }
+        });
+      } else {
+        console.warn("No se encontró el evento catchup con ID:", eventId);
+      }
     },
 
 

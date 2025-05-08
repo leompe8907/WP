@@ -468,17 +468,18 @@
   <!-- Modal de Catchups -->
   <div id="catchupModal" class="catchup-modal" style="display: none;">
     <div class="catchup-grid">
-      <!-- Botón de cierre en la esquina superior derecha -->
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="catchupModalCloseButton"></button>
-
       <!-- 1x1: Título -->
       <div class="catchup-title">
         <h3>📺 Lista de Canales</h3>
       </div>
 
       <!-- 1x2: Botones de fechas -->
-      <div class="catchup-dates" id="catchupDateButtons">
-        <!-- Botones generados dinámicamente -->
+      <div class="catchup-date-container">
+        <div class="catchup-dates" id="catchupDateButtons">
+          <!-- Botones generados dinámicamente -->
+        </div>
+        <!-- Botón de cierre en la esquina superior derecha -->
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="catchupModalCloseButton">X</button>
       </div>
 
       <!-- 2x1: Lista de canales -->

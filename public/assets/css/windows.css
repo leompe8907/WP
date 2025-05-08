@@ -546,19 +546,27 @@
   position: relative;  /* Asegura que el modal tenga un contexto para el botón de cierre */
 }
 
+.catchup-date-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
 #catchupModalCloseButton {
-  position: absolute;
-  top: 10px;  /* Ajusta la distancia desde la parte superior */
-  right: 10px;  /* Ajusta la distancia desde la derecha */
-  border: none;  /* Eliminar el borde del botón */
-  background: transparent;  /* Fondo transparente */
-  font-size: 1.5rem;  /* Tamaño del icono */
-  color: #fff;  /* Color blanco */
-  cursor: pointer;  /* Cambiar el cursor cuando pase por encima */
+  border: none;
+  border-radius: 100%;
+  background-color: #ff0000;
+  font-size: 1.5rem;
+  color: #ffffff;
+  cursor: pointer;
+  width: 2.5em;
+  height: 2.5em;
 }
 
 #catchupModalCloseButton:hover {
-  color: #f00;  /* Cambiar el color al pasar el mouse sobre el botón */
+  background-color: #ff00008e;
+  color: rgb(255, 255, 255);  /* Cambiar el color al pasar el mouse sobre el botón */
 }
 
 .catchup-modal {
@@ -592,12 +600,12 @@
 }
 
 .catchup-dates {
+  width: 95%;
   grid-column: 2;
   grid-row: 1;
   display: flex;
   justify-content: center;
   gap: 1em;
-  justify-content: flex-start;
 }
 
 .catchup-dates button {
@@ -647,13 +655,13 @@
 }
 
 .catchup-event-list {
-  grid-column: 2;
-  grid-row: 2;
-  overflow-y: auto;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1em;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 10px;
+  grid-auto-rows: 20em;
+  justify-items: center;
+  overflow-y: scroll;
 }
 
 .catchup-event-list .event-card {
@@ -672,4 +680,26 @@
 .catchup-event-list .event-card:hover {
   transform: scale(1.05);
   background: #0af;
+}
+
+.catchup-event-item{
+  border-radius: 20px;
+  box-sizing:border-box;
+  height: 20em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  color: white;
+  text-align: center;
+}
+
+.catchup-event-item:hover{
+  background-color: #0af;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+.catchup-event-item img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
