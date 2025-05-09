@@ -647,6 +647,12 @@ Scene_Home = (function (Scene) {
         return;
       }
 
+      if ($el.is("#catchupModalCloseButton")){
+        console.log("click")
+        $("#catchupModal").modal("hidden")
+        return
+      }
+
       if ($el.isInAlertConfirm(this.$el)) {
         $el.closeAlert(this.$el);
         Focus.to(this.$lastFocused);
@@ -940,22 +946,20 @@ Scene_Home = (function (Scene) {
       var self = this;
 
       if ($el.is("#catchups")) {
+        // esta linea si se habilita se podra cerrar el modal desde cualquier areas
+        //$("#catchupModal").modal("show");
+
         // Muestra el modal de Catchups
-        $("#catchupModal").modal("show");
+        $("#catchupModal").removeClass("hidden")
 
-        // Cargar los datos de Catchups si no están cargados
-        if ($("#catchupModalContent").children().length === 0) {
-            const $catchupsRow = $("#catchupsRow").detach();  // Desconecta el contenido
-            $("#catchupModalContent").append($catchupsRow);    // Lo agrega al modal
-            $catchupsRow.removeClass("hidden");                // Muestra el contenido
-        }
+        Focus.to($("#catchupModalCloseButton"));
+
+
+        $("#catchupModalCloseButton").on("click", function() {
+          self.closeCatchupModal();  // Llama a la función para cerrar el modal
+        });
+
         return;
-      }
-
-      // Si el usuario presiona Enter miestras esta en el boton de cerrar
-      if($el.is("#closeSearchButton")){
-        self.hideSearchPanel();
-        return
       }
 
       if($el.is("#vod")){
@@ -1901,8 +1905,8 @@ Scene_Home = (function (Scene) {
         }
 
         cells += `
-          <div class="catchup-event-item focusable" data-id="${event.eventId}" data-group="${catchup.epgStreamId}" data-type="catchup" style="${style};" onclick="HOME.playCatchupEvent('${event.eventId}', '${catchup.epgStreamId}')">
-            <img src="${src}" style="width:100%;padding: 10px;border-radius: 50px;" onerror="imgOnError(this)" alt="${event.name}">
+          <div class="catchup-event-item focusable" data-id="${event.eventId}" data-group="${catchup.epgStreamId}" data-type="catchup-event" style="${style};" onclick="HOME.playCatchupEvent('${event.eventId}', '${catchup.epgStreamId}')">
+            <img src="${src}" style="width:100%; padding: 10px;" onerror="imgOnError(this)" alt="${event.name}">
             <div class="catchup-event-details" style="text-align: center;">
               <span class="event-name">${event.name}</span>
               <span class="event-time">${getDateFormatted(event.startDate, true)} - ${getDateFormatted(event.endDate, true)}</span>
@@ -1914,8 +1918,6 @@ Scene_Home = (function (Scene) {
       // Insertar los eventos filtrados en el contenedor #catchupEventList
       $("#catchupEventList").html(cells);
       $("#catchupEventList").removeClass("hidden");
-
-      //this.setupChannelInteractionsEvents();
     },
 
     playCatchupEvent: function(eventId, groupId) {
@@ -1933,6 +1935,7 @@ Scene_Home = (function (Scene) {
         AppData.getTopLevelCatchupM3u8Url(catchup.id, function (url) {
           if (url) {
             self.playContentWithAccess("catchup-event", eventId, url, catchup, true, false);
+            self.closeCatchupModal()
           }
         });
       } else {
@@ -1940,6 +1943,13 @@ Scene_Home = (function (Scene) {
       }
     },
 
+    // Fucnion para cerrar el modal de catchup
+    closeCatchupModal: function() {
+      $("#catchupModal").modal("hide");
+      $("#catchupModal").addClass("hidden")
+      $("#catchupEventList").empty();
+      Focus.to($("#catchups"))
+    },
 
     // openCatchupDate: function (catchup, dateString) {
     //   var events = catchup.events.filter(function (event) {

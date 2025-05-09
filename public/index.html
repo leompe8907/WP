@@ -466,7 +466,7 @@
   </div>
 
   <!-- Modal de Catchups -->
-  <div id="catchupModal" class="catchup-modal" style="display: none;">
+  <div id="catchupModal" class="catchup-modal hidden">
     <div class="catchup-grid">
       <!-- 1x1: Título -->
       <div class="catchup-title">
@@ -479,7 +479,8 @@
           <!-- Botones generados dinámicamente -->
         </div>
         <!-- Botón de cierre en la esquina superior derecha -->
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="catchupModalCloseButton">X</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="catchupModalCloseButton">X</button>
+
       </div>
 
       <!-- 2x1: Lista de canales -->
