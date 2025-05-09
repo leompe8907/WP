@@ -2,7 +2,7 @@
  *******************************************************************************
 
  * All rights reserved
- *  
+ *
 
  *
  * You may obtain a copy of the License at LICENSE.txt
@@ -11,7 +11,7 @@
 
 /**
  * Default platform device
- * 
+ *
  * @author AuroraTech
  * @class Device
  * @mixins Events
@@ -38,7 +38,7 @@ Device = (function(Events) {
     $.extend(true, Device, Events, {
 		/**
 		 * Initialize device
-		 * 
+		 *
 		 * @param {Function} callback
 		 * @param {Object} scope
 		 */
@@ -48,7 +48,7 @@ Device = (function(Events) {
 				LEFT: 37,
 				UP: 38,
 				DOWN: 40,
-				RETURN: 8,
+				RETURN: 27,
 				ENTER: 13,
 				PLAY: 415,
 				PAUSE: 19,
@@ -72,7 +72,7 @@ Device = (function(Events) {
 				PUP: 33,
 				PDOWN: 34,
 				PRECH: 46, // Delete
-				TXTMIX: 110 // ,Del
+				TXTMIX: 8 // ,Del
 			});
 
 			this.isDEFAULT = true; // set default device
@@ -83,7 +83,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Returns firmware version
-		 * 
+		 *
 		 * @returns {String}
 		 */
 		getFirmware: function() {
@@ -91,7 +91,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Returns unique device ID (MAC address)
-		 * 
+		 *
 		 * @returns {String}
 		 */
 		getUID: function() {
@@ -99,7 +99,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Returns device IP address
-		 * 
+		 *
 		 * @returns {String}
 		 */
 		getIP: function() {
@@ -107,7 +107,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Returns device name and model code
-		 * 
+		 *
 		 * @param {Boolean} stripSpaces TRUE for strip empty chars
 		 * @returns {String} name of device
 		 */
@@ -116,7 +116,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Returns device country
-		 * 
+		 *
 		 * @returns {String} Should be in ISO 3166-1 alpha-2 (cz, gb,...)
 		 */
 		getCountry: function() {
@@ -132,7 +132,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Returns device language
-		 * 
+		 *
 		 * @returns {String} Should be in ISO 639-1 (en-gb, cs-cz,...)
 		 */
 		getLanguage: function() {
@@ -178,7 +178,7 @@ Device = (function(Events) {
 
 		/**
 		 * Returns new Date object
-		 * 
+		 *
 		 * @returns {Date}
 		 */
 		getDate: function() {
@@ -186,7 +186,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Returns an time zone offset in minutes
-		 * 
+		 *
 		 * @returns {Number}
 		 */
 		getTimeZoneOffset: function() {
@@ -194,7 +194,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Returns general device information in text format
-		 * 
+		 *
 		 * @returns {String}
 		 */
 		getInfo: function() {
@@ -213,7 +213,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Returns driver year.
-		 * 
+		 *
 		 * @returns {Number}
 		 */
 		getYear: function() {
@@ -225,7 +225,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Pseudo clear history = history go to end.
-		 * Intended for webOS (Back control). 
+		 * Intended for webOS (Back control).
 		 */
 		clearHistory: function() {
 			return null;
@@ -239,7 +239,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Fired when application is going do exit
-		 * 
+		 *
 		 * @param {Boolean} [dvb=false] TRUE for exit to DVB, FALSE for SmartHUB
 		 */
 		exit: function(dvb) {
@@ -247,7 +247,7 @@ Device = (function(Events) {
 		},
 		/**
 		 * Check if network connection is up
-		 * 
+		 *
 		 * @param {Function} callback
 		 * @param {Object} scope
 		 */
