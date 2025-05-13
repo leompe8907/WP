@@ -804,7 +804,7 @@ Scene_Home = (function (Scene) {
     filterChannels: function (query) {
       var services = AppData.services; // Datos de canales
       var vods = AppData.allVods; // Datos de VOD
-      var catchups = AppData.catchupGroups.length ? AppData.catchupGroups.map(function (group) { return group.events; }) : [];
+      var catchups = AppData.catchupGroups.length ? AppData.catchupGroups.map(function (group) { return group.events; }) : []; // Datos de catchups
 
       console.log("Datos disponibles - services:", services);
       console.log("Datos disponibles - vods:", vods);
@@ -834,7 +834,7 @@ Scene_Home = (function (Scene) {
 
         // Filtrar Catchups
         results = results.concat(catchups.filter(function (catchup) {
-          return catchup.name.toLowerCase().indexOf(query) !== -1;
+          return catchup.name?.toLowerCase().indexOf(query) !== -1 && catchup.events && catchup.events.length > 0;
         }));
       }
 
@@ -859,7 +859,7 @@ Scene_Home = (function (Scene) {
         var result = results[i];
         var type = result.catchupGroupId ? "catchup" : (result.categories ? "vod" : "service");
         var logo = (type === "service") ? (result.img || "") : (type === "vod") ? (result.posterListURL || "https://pmdw-1.in.tv.br//cv_data_pub/images/"+result.image1Id+"/v/vod_poster_list.jpg") : (result.imageUrl || "");
-        var name = result.name || "Sin nombre";
+        var name = result.name;
 
         var div = document.createElement("div");
         div.className = "result-item focusable";

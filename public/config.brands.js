@@ -27,7 +27,7 @@ var CONFIG_BRANDS = [
     showTime: false,
     epgLineColorTime: "#3333FF",
     developedBy: "inTV&#174,",
-    miniPlayerEnabled: false
+    miniPlayerEnabled: true
   },
   {
     brand: "meganet",
@@ -78,7 +78,7 @@ var CONFIG_BRANDS = [
     showTime: true,
     epgLineColorTime: "#2CE308",
     developedBy: "Network Broadcast",
-    miniPlayerEnabled: false
+    miniPlayerEnabled: true
   },
   {
     brand: "bromteckarg",
@@ -245,7 +245,7 @@ var CONFIG_BRANDS = [
     showTime: true,
     epgLineColorTime: "#2CE308",
     developedBy: "Network Broadcast",
-    miniPlayerEnabled: false
+    miniPlayerEnabled: true
   },
   {
     brand: "opflix",

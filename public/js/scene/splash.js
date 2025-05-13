@@ -32,8 +32,8 @@ Scene_Splash = (function (Scene) {
       console.log('render splash scene');
       $("#alertModalButton").text(__("SettingsOkButton"));
       $(".img-logo").attr("src", "assets/images/" + CONFIG.app.brand + "/logo.png");
-      $("#viewport").css({ 'background-image': 'url(./assets/images/' + CONFIG.app.brand + '/background.png)' });
-      $("#scene-splash").css({ 'background-image': 'url(../assets/images/' + CONFIG.app.brand + '/splash.png)' });
+      $("#viewport").css({ 'background-image': 'url(assets/images/' + CONFIG.app.brand + '/background.png)' });
+      $("#scene-splash").css({ 'background-image': 'url(assets/images/' + CONFIG.app.brand + '/splash.png)' });
       $("#alertModalConfirmButton").text(__("SettingsOkButton"));
       $("#alertModalConfirmCancelButton").text(__("SettingsCancelButton"));
     },
