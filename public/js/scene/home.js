@@ -62,7 +62,7 @@ Scene_Home = (function (Scene) {
       }
 
       $("#catchupsRow").addClass("hidden");
-
+      this.$el.find("#maximizeIcon").on("click", this.toggleFullscreen.bind(this));
       this.$el.find("#epgAtThisTimeLabel").html(__("EPGAtThisTime"));
       this.$el.find("#epgNextLabel").html(__("EPGNext"));
       this.$el.find("#menuTitleLabel").html(__("MenuTitle"));
@@ -149,6 +149,12 @@ Scene_Home = (function (Scene) {
       // }
     },
 
+    toggleFullscreen: function() {
+      //nbPlayer.requestFullscreen();
+      console.log("fullscreen")
+      this.goToFullscreen()
+    },
+
 
     /**
          * @inheritdoc Scene#focus
@@ -210,6 +216,16 @@ Scene_Home = (function (Scene) {
           }
         }
       }
+
+      //console.log("activate home");
+      // if (this.playbackMetadata.id != null) {
+      //   // Forzar reproducción del video actual
+      //   setTimeout(function() {
+      //     if (nbPlayer.$player) {
+      //       nbPlayer.$player.play();
+      //     }
+      //   }, 100);
+      // }
 
       if (this.requestingData) {
         return;
