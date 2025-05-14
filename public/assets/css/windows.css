@@ -691,6 +691,7 @@
   justify-content: space-evenly;
   color: white;
   text-align: center;
+  align-items: center;
 }
 
 .catchup-event-item:hover{
@@ -699,9 +700,11 @@
   transition: all 0.3s ease;
 }
 .catchup-event-item img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  border-radius: 30px;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  -ms-border-radius: 30px;
+  -o-border-radius: 30px;
 }
 
 /*Configuración del div del previsualizador */

@@ -1922,7 +1922,7 @@ Scene_Home = (function (Scene) {
 
         cells += `
           <div class="catchup-event-item focusable" data-id="${event.eventId}" data-group="${catchup.epgStreamId}" data-type="catchup-event" style="${style};" onclick="HOME.playCatchupEvent('${event.eventId}', '${catchup.epgStreamId}')">
-            <img src="${src}" style="width:100%; padding: 10px;" onerror="imgOnError(this)" alt="${event.name}">
+            <img src="${src}" style="width:80%; padding: 10px;" onerror="imgOnError(this)" alt="${event.name}">
             <div class="catchup-event-details" style="text-align: center;">
               <span class="event-name">${event.name}</span>
               <span class="event-time">${getDateFormatted(event.startDate, true)} - ${getDateFormatted(event.endDate, true)}</span>

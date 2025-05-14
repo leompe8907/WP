@@ -129,7 +129,7 @@ var CONFIG_BRANDS = [
     showTime: true,
     epgLineColorTime: "#2CE308",
     developedBy: "Network Broadcast",
-    miniPlayerEnabled: false
+    miniPlayerEnabled: true
   },
   {
     brand: "dtel",
