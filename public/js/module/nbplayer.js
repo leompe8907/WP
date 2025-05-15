@@ -92,6 +92,18 @@ var nbPlayer = {
     this.ignoredTextTracks = ["SoundHandler"];
     this.isLG = Device.isLG || Device.isWEBOS;
 
+    // Inicializar elementos de control
+    this.$controlBar = this.$playerDiv.find(".vjs-control-bar:first");
+    this.$controlBar.addClass(".hide-controls");
+
+    // Seleccionar el contenedor de la imagen del evento/canal
+    this.$itemImageDiv = this.$controlBar.find(".vjs-nb-item-image:first");
+    this.$itemImageImg = this.$itemImageDiv.find("img:first");
+
+    // Iniciar controles VOD
+    this.$controlBar.append($("#matControlsTemplate").html());
+    $("#matControlsTemplate").remove();
+
     this.vodControlsEnum = {
       play: "play-pause",
       next: "next-episode",
@@ -175,7 +187,6 @@ var nbPlayer = {
     this.$epgDataTr = this.$vodControls.find(".nb-vjs-epg-data-tr:first");
     this.$seekbarCurrentTime = this.$controlBar.find(".nb-vjs-vod-current-time:first");
     this.$seekbarLeftTime = this.$controlBar.find(".nb-vjs-vod-duration:first");
-    //this.$backButton = this.$controlBar.find(".nb-vjs-back-button:first");
 
     //add tooltips elements to each focusable items
     this.$vodControls.find(".mat-controls-item-control.focusable").append("<span class='nb-vjs-tooltip'></span>");
@@ -211,20 +222,24 @@ var nbPlayer = {
       self.$pauseIcon.show();
     });
 
-    //se adiciono este codigo para el fullscreen
-    // this.$player.on('fullscreenchange', function () {
-    //   setTimeout(function () {
-    //     if (self.isFullscreen()) {
-    //       $(self.$player.el_).find(".video-cover").hide();
-    //       self.deactivateControls(false);
-    //     } else {
-    //       $(self.$player.el_).find(".video-cover").show();
-    //       self.closeSideMenu();
-    //       self.hideControls();
-    //       self.deactivateControls(true);
-    //     }
-    //   }, 800);
+    // this.$vodControls.find(".mat-controls-item-control").on("click", function (e) {
+    //   nbPlayer.manageOnEnter($(this));
     // });
+
+    //se adiciono este codigo para el fullscreen
+    this.$player.on('fullscreenchange', function () {
+      setTimeout(function () {
+        if (self.isFullscreen()) {
+          $(self.$player.el_).find(".video-cover").hide();
+          self.deactivateControls(false);
+        } else {
+          $(self.$player.el_).find(".video-cover").show();
+          self.closeSideMenu();
+          self.hideControls();
+          self.deactivateControls(true);
+        }
+      }, 800);
+    });
 
     this.$playerDiv.parent().prepend('<div class="video-cover"></div>');
 
@@ -260,12 +275,25 @@ var nbPlayer = {
     EPGDetails.init($mainVideo);
   },
 
+  // Función para actualizar la imagen del evento o canal
+  updateEventImage: function (eventImageSrc, channelImageSrc) {
+    var imageSrc = eventImageSrc && eventImageSrc.length > 0 ? eventImageSrc : channelImageSrc;
+
+    // Verifica que el elemento de imagen exista
+    if (this.$itemImageImg) {
+      this.$itemImageImg.attr("src", imageSrc);
+      console.log("Imagen actualizada a: " + imageSrc);
+    } else {
+      console.error("Elemento de imagen no encontrado.");
+    }
+  },
+
   requestFullscreen: function () {
     //var self = this;
-    this.$container.addClass("video_full");
-    console.log(this.$container)
+    //this.$container.addClass("video_full");
+    //console.log(this.$container)
     //this.$player.requestFullscreen();
-    this.showControls();
+    //this.showControls();
     //animated way (experimental)
     // var videoFull = {
     //   'width' : '100vw',
@@ -282,15 +310,14 @@ var nbPlayer = {
     // $('.video-container').animate(videoFull, 500, function () {
     //   self.showControls();
     // });
-    // try {
-    //   //this.deactivateControls(false);
-    //   var self = this;
-    //   this.$player.requestFullscreen();
-    //   setTimeout(function () {
-    //     self.showControls();
-    //   }, 100);
-    // } catch (e) { }
-
+    try {
+      //this.deactivateControls(false);
+      var self = this;
+      this.$player.requestFullscreen();
+      setTimeout(function () {
+        self.showControls();
+      }, 100);
+    } catch (e) { }
   },
 
   isPaused: function () {
@@ -322,7 +349,7 @@ var nbPlayer = {
         return;
       }
 
-      if ((CONFIG.app.brand == "fotelka") && this.nbPlayerAreControslActive() && (direction == "up" || direction == "down") && !this.isTracksMenuOpened()) {
+      if ((CONFIG.app.brand == "fotelka" || CONFIG.app.brand == "cablesatelite" ) && this.nbPlayerAreControslActive() && (direction == "up" || direction == "down") && !this.isTracksMenuOpened()) {
         if (direction == "up") {
           this.homeObject.channelUp();
         } else if (direction == "down") {
@@ -460,8 +487,9 @@ var nbPlayer = {
           }
           break;
         case this.vodControlsEnum.back:
-          this.homeObject.onReturnFullscreen(Focus.focused, function() {
-            
+          this.exitFullscreen(function () {
+            //self.restartFocus();
+            callbackRestartFocus();
           });
           break;
         case this.vodControlsEnum.trackItem:
@@ -1033,23 +1061,22 @@ var nbPlayer = {
     }, 6000);
   },
 
+  //correcion de funcion para poder usar los botones el video maximizado
   showControls: function () {
     if (this.isSideMenuOpened()) {
-      this.focusOnSideMenu(false);
+      this.focusOnSideMenu();
       return;
     }
 
     this.$player.userActive(true);
 
     var self = this;
-    self.focusOnFirstElement();
-    self.resetAutoHideControls();
-    // setTimeout(function () {
-    //   $(".nb-vjs-tooltip").hide();
-    //   //$(".nb-vjs-custom-controls-div").show();
-    //   self.focusOnFirstElement();
-    //   self.resetAutoHideControls();
-    // }, 500);
+    setTimeout(function () {
+      $(".nb-vjs-tooltip").hide();
+      //$(".nb-vjs-custom-controls-div").show();
+      self.focusOnFirstElement();
+      self.resetAutoHideControls();
+    }, 500);
   },
 
   hideControls: function () {
@@ -1131,13 +1158,9 @@ var nbPlayer = {
     }
 
     this.hideControls();
-    // this.$player.exitFullscreen();
-    // this.deactivateControls(true);
-    this.$container.removeClass("video_full");
-    if (callback) {
-      callback(true);
-    }
-
+    this.$player.exitFullscreen();
+    this.deactivateControls(true);
+    callback();
   },
 
   onReturn: function ($el, playbackMetadata, callback) {
@@ -1167,8 +1190,8 @@ var nbPlayer = {
 
   //funcion para maximias
   isFullscreen: function () {
-    // return this.$player && this.$player.isFullscreen_;
-    return this.$container.hasClass("video_full");
+    return this.$player.isFullscreen_;
+    //return this.$container.hasClass("video_full");
   },
 
   setTextTrack: function (index) {
@@ -1395,8 +1418,8 @@ var nbPlayer = {
       var $focusTo = null;
       if (this.homeObject.playbackMetadata.type == "service") {
         $focusTo = this.$vodControls.find(".focusable[data-type='side-menu']:first");
-      } 
-      
+      }
+
       if ($focusTo == null) {
         $focusTo = this.$vodControls.find(".focusable:visible:first");
       }
