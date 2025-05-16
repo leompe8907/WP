@@ -262,7 +262,7 @@ EPG = (function (Events) {
               minutesFromStart = getTimeDifference(prevEndDate, self.epgStartDate, 'minutes');
               duration = getTimeDifference(prevEndDate, item.startDate, 'minutes');
               epgItemsHtml += "<div class='epg-cell epg-channel-item focusable " + firstFocus + "' style='position:absolute; left: "
-                + (minutesFromStart * self.epgMinuteWidth) + self.epgUnitName + "; width: " + (duration * self.epgMinuteWidth - spaceBetweenCells) + self.epgUnitName + "'"
+                + (minutesFromStart * self.epgMinuteWidth) + self.epgUnitName + "; width: " + (duration * self.epgMinuteWidth - spaceBetweenCells) + self.epgUnitName + " style='height: 5em;'"
                 + " data-date='" + getDateFormatted(prevEndDate, false) + "' data-service-id='" + channel.id + "'>" + __("EPGNoData") + "</div>";
             }
 

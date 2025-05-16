@@ -69,7 +69,7 @@ CONFIG = {
     imageUrlVodPosterList: "%base_url%/cv_data_pub/images/%image_id%/v/vod_poster_list.jpg",
     imageUrlVodPosterInfo: "%base_url%/cv_data_pub/images/%image_id%/v/vod_poster_info.jpg",
     imageUrlVodOriginalImage: "%base_url%/cv_data_pub/images/%image_id%/v/original.jpg",
-    newEpgRowsOnInit: 7,
+    newEpgRowsOnInit: 700, //numero de canales a los cuales buscarle epg al iniciar la aplicacion
     maxAutoActivateLicense: 10, //times
     miniPlayerEnabled: CONFIG_CURRENT_BRAND.miniPlayerEnabled,
     defaultInactivityTimeout: 21600 //seconds

@@ -2053,9 +2053,13 @@ Scene_Home = (function (Scene) {
         new Swiper(".swiper-container", {
           slidesPerView: 9,
           spaceBetween: 10,
+          loop: true, // 🔁 Scroll redondo
           navigation: {
             nextEl: ".swiper-button-next",
             prevEl: ".swiper-button-prev",
+          },
+          keyboard: {
+            enabled: true, // Opcional: activar flechas del teclado
           },
         });
       }, 100);
@@ -2106,9 +2110,13 @@ Scene_Home = (function (Scene) {
           new Swiper(".swiper-container", {
             slidesPerView: 9,
             spaceBetween: 10,
+            loop: true, // 🔁 Scroll redondo
             navigation: {
               nextEl: ".swiper-button-next",
               prevEl: ".swiper-button-prev",
+            },
+            keyboard: {
+              enabled: true, // Opcional: activar flechas del teclado
             },
           });
         }, 100);
