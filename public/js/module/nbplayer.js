@@ -520,9 +520,12 @@ var nbPlayer = {
           EPGDetails.show(this.$container.find("#mainVideo"), this.homeObject.playbackMetadata, this.homeObject, Focus.focused);
           break;
         case this.vodControlsEnum.epg:
-          this.homeObject.onReturnFullscreen(Focus.focused, function() {
-            callbackGoToEpg();
-          });
+          if (typeof callbackGoToEpg === "function" && this.isFullscreen()) {
+            this.exitFullscreen(function () {
+              callbackGoToEpg();
+
+            })
+          }
           break;
       }
     }

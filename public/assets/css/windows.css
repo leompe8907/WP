@@ -197,7 +197,7 @@
 @media screen and (min-width: 1920px), screen and (min-width: 1792px) {
   .channel-style{
     position: relative;
-    width: 12em;
+    width: 10em;
     height: 8.5em;
   }
   .img-style{

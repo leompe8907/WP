@@ -120,6 +120,7 @@ div.horizontal-slide {
     color: #FFFFFF;
     text-align: center;
     display: grid;
+    object-fit: contain;
   }
 
   .channel-video div {
@@ -159,12 +160,13 @@ div.horizontal-slide {
 
 @media screen and (min-width: 1920px), screen and (min-width: 1792px) {
   .channel-video img {
-    width: 12em;
-    /* height: 8.5em; */
+    width: 10em;
+    height: 8.5em;
     margin: 0!important;
     color: #FFFFFF;
     text-align: center;
     display: grid;
+    object-fit: contain;
   }
 
   .channel-video div{

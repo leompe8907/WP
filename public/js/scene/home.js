@@ -38,7 +38,6 @@ Scene_Home = (function (Scene) {
       this.preventPlayerReload = false;
       this.isTizen = (Device.isTIZEN || Device.isSAMSUNG);
       this.isLG = Device.isLG || Device.isWEBOS;
-      this.miniPlayerEnabled = CONFIG.app.miniPlayerEnabled === false ? false : true;
       this.initializeSearchEvents();
       EPG.homeObject = this;
       VOD.homeObject = this;
@@ -96,20 +95,15 @@ Scene_Home = (function (Scene) {
       }, (60 - date.getSeconds()) * 1000);
 
       if (CONFIG.app.logoPositionHome == 'right') {
-        if (this.miniPlayerEnabled) {
-          var percPlayer = $("#divVideoContainer").width() / $("#divVideoContainer").parent().parent().width() * 100;
-          $("#divVideoContainer").parent().css({ 'width': percPlayer + '%' });
+        var percPlayer = $("#divVideoContainer").width() / $("#divVideoContainer").parent().parent().width() * 100;
+        $("#divVideoContainer").parent().css({ 'width': percPlayer + '%' });
 
-          var percLogo = (percPlayer / 3) * 2;
-          $("#rightLogoImage").parent().css({ 'width': percLogo + '%' });
-          //$("#rightLogoImage").css({'margin-top': '20%', 'width': '100%', 'padding': '1em'});
+        var percLogo = (percPlayer / 3) * 2;
+        $("#rightLogoImage").parent().css({ 'width': percLogo + '%' });
+        //$("#rightLogoImage").css({'margin-top': '20%', 'width': '100%', 'padding': '1em'});
 
-          var percInfo = 100 - percPlayer - percLogo;
-          $(".header-row-info").css({ 'width': percInfo + '%' });
-        } else {
-          $("#divVideoContainer").parent().hide();
-          $(".header-row-info").removeClass("col-sm-6").addClass("col-sm-10");
-        }
+        var percInfo = 100 - percPlayer - percLogo;
+        $(".header-row-info").css({ 'width': percInfo + '%' });
 
         $("#topLogoImage").addClass("hide");
         $("#rightLogoImage").removeClass("hide");
@@ -150,9 +144,11 @@ Scene_Home = (function (Scene) {
     },
 
     toggleFullscreen: function() {
-      //nbPlayer.requestFullscreen();
-      console.log("fullscreen")
-      this.goToFullscreen()
+      if (nbPlayer.isFullscreen()) {
+        document.exitFullscreen();
+      } else {
+        nbPlayer.requestFullscreen();
+      }
     },
 
 
@@ -216,16 +212,6 @@ Scene_Home = (function (Scene) {
           }
         }
       }
-
-      //console.log("activate home");
-      // if (this.playbackMetadata.id != null) {
-      //   // Forzar reproducción del video actual
-      //   setTimeout(function() {
-      //     if (nbPlayer.$player) {
-      //       nbPlayer.$player.play();
-      //     }
-      //   }, 100);
-      // }
 
       if (this.requestingData) {
         return;
@@ -706,9 +692,11 @@ Scene_Home = (function (Scene) {
         });
       } else {
 
-        if (CONFIG.app.brand == "fotelka" || CONFIG.app.brand == "supercabo" || CONFIG.app.brand == "cablesatelite") {
-          if (this.playbackMetadata && this.playbackMetadata.id && this.playbackMetadata.id != '') {
-            this.goToFullscreen();
+        if (CONFIG.app.brand == "fotelka") {
+          if (this.playbackMetadata.id && this.playbackMetadata.id != '') {
+            try {
+              nbPlayer.requestFullscreen();
+            } catch (e) { }
             return;
           }
         }
@@ -1113,7 +1101,9 @@ Scene_Home = (function (Scene) {
 
 
         if (this.playbackMetadata && type == this.playbackMetadata.type && id == this.playbackMetadata.id && !this.firstLaunch) {
-          this.goToFullscreen();
+          try {
+            nbPlayer.requestFullscreen();
+          } catch (e) { }
           return;
         }
 
@@ -1726,7 +1716,7 @@ Scene_Home = (function (Scene) {
       App.notification(__("Scene_Home"));
       Focus.to(this.$firstFocusableItem);
 
-      if (this.miniPlayerEnabled && this.firstLaunch) { // play first item when app data is loaded
+      if (this.firstLaunch) { // play first item when app data is loaded
         this.onEnter(Focus.focused, []);
       }
     },
@@ -2130,7 +2120,7 @@ Scene_Home = (function (Scene) {
     playContentWithAccess: function (type, id, url, item, reset, forceFullscreen) {
       if (type == this.playbackMetadata.type && id == this.playbackMetadata.id && !this.forcePlayback
         || ((this.playbackMetadata.item && item.isSeries && this.playbackMetadata.item.isSeries && this.playbackMetadata.item.currentEpisodeId == item.currentEpisodeId))) {
-        this.goToFullscreen();
+        nbPlayer.requestFullscreen();
         return;
       }
 
@@ -2142,7 +2132,7 @@ Scene_Home = (function (Scene) {
     playContent: function (type, id, url, item, reset, isAutoPlay) {
       if (type == this.playbackMetadata.type && id == this.playbackMetadata.id && !this.forcePlayback
         || ((this.playbackMetadata.item && item.isSeries && this.playbackMetadata.item.isSeries && this.playbackMetadata.item.currentEpisodeId == item.currentEpisodeId))) {
-        this.goToFullscreen();
+        nbPlayer.requestFullscreen();
         return;
       }
 
@@ -2163,11 +2153,12 @@ Scene_Home = (function (Scene) {
       }
       nbPlayer.playContent(type, url);
       this.setPlayerMetadata(type, id, url, item);
-      this.goToFullscreen();
 
       if (!nbPlayer.isFullscreen()) {
         nbPlayer.$player.userActive(false);
       }
+
+      this.setPlayerMetadata(type, id, url, item);
 
       //continue
       if (nbPlayer.nbPlayerAreControslActive() && !nbPlayer.isSideMenuOpened()) {
@@ -2183,12 +2174,12 @@ Scene_Home = (function (Scene) {
         var timeResume = User.getVideoHistoryFor(type, id);
         if (timeResume > 0) {
           if (nbPlayer.isFullscreen()) {
-            this.onReturnFullscreen();
+            nbPlayer.exitFullscreen();
           }
           this.$el.showAlertConfirm(__("MoviesContinuePlayback"), "MoviesContinuePlayback", __("MoviesContinuePlaybackYes"), __("MoviesContinuePlaybackNo"), "ok");
           autoplay = false;
         } else {
-          this.goToFullscreen();
+          nbPlayer.requestFullscreen();
         }
       }
 
@@ -2204,7 +2195,7 @@ Scene_Home = (function (Scene) {
           //   this.goToFullscreen();
           // }
           if ((CONFIG.app.brand == "fotelka") && !isAutoPlay) {
-            this.goToFullscreen();
+            nbPlayer.requestFullscreen();
           }
         }
       }
@@ -2686,10 +2677,10 @@ Scene_Home = (function (Scene) {
     },
 
     licenseEnded: function () {
-      //Exit from fullscreen removed to avoid issues when license is lost
-      // if (nbPlayer.isFullscreen()) {
-      //   this.onReturnFullscreen();
-      // }
+      if (nbPlayer.isFullscreen()) {
+        var self = this;
+        nbPlayer.exitFullscreen(function () { });
+      }
       this.NBPLAYER_RETRY_AFTER_ERROR = false;
       var self = this;
       NbNetworkObserver.simpleCheckInternetConnection(function () {
@@ -2807,7 +2798,7 @@ Scene_Home = (function (Scene) {
       nbPlayer.$player.reset();
 
       if (nbPlayer.isFullscreen()) {
-        this.onReturnFullscreen();
+        nbPlayer.exitFullscreen(function () { });
       }
 
       Router.go("offline");
@@ -3002,7 +2993,7 @@ Scene_Home = (function (Scene) {
       } else {
         this.playContent(type, id, url, item, reset, false);
         if (forceFullscreen) {
-          this.goToFullscreen();
+          nbPlayer.requestFullscreen();
         }
       }
 
