@@ -195,8 +195,8 @@ var CONFIG_BRANDS = [
   {
     brand: "cableatlantico",
     appName: "Cable Atlantico",
-    drm: "https://cv10.panaccess.com/",//drm: "https://mw.cabledelancer.com/"
-    token: "ekMIItbwRqfRWfdSTkwL",//token: "ZteKaVByMTRHfqeHXtWK",
+    drm: "https://mw.cabledelancer.com/",
+    token: "ZteKaVByMTRHfqeHXtWK",
     logoPositionHome: "right",
     showTime: false,
     epgLineColorTime: "#3333FF",
