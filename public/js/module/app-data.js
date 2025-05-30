@@ -285,61 +285,38 @@ AppData = (function (Events) {
     },
 
     prepareServicesAndBouquetsData: function (callback) {
-
       var self = this;
 
+      // Organizar los servicios por el número de canal (lcn)
       self.channels = this.services;
-      // 1. sort services by lcn (channel number)
       self.channels.sort(function (a, b) {
-        if (a.lcn > b.lcn) {
-          return 1;
-        }
-        if (a.lcn < b.lcn) {
-          return -1;
-        }
-
-        return 0;
+          return a.lcn - b.lcn;
       });
-      // 2. filter services without lcn.
-      //var tvChannelsNoNumber = channels.filter(channel => channel.lcn == 0);
+
+      // Filtrar los servicios sin número de canal
       var tvChannelsNoNumber = self.channels.filter(function (channel) {
-        return channel.lcn == 0;
+          return channel.lcn == 0;
       });
-
-      // 3. create list "channels" ordered by channel number and channels without number at the end of list
-      //channels = channels.filter(channel => channel.lcn != 0);
       self.channels = self.channels.filter(function (channel) {
-        return channel.lcn != 0;
+          return channel.lcn != 0;
       });
-
       self.channels = self.channels.concat(tvChannelsNoNumber);
 
-      // 4. Iterate bouquets list and set 'services filtered by bouquet' to items property.
-      this.bouquets.forEach(function (bouquet, index, array) {
-        //var filtered = self.services.filter(channel => channel.bouquetIds.includes(bouquet.bouquetId));
-        var filtered = self.services.filter(function (channel) {
-          return channel.bouquetIds.indexOf(bouquet.bouquetId) >= 0;
-        });
-        self.bouquets[index].items = filtered;
-      });
-      // 5. create a bouquet with title "Channels" and set "channels" to items property, append to bouquets list
-      var bouquetAllChannels = [{
-        bouquetId: "106",
-        description: "",
-        items: self.channels,
-        name: __("ServicesAndTVTVChannels"),
-        priority: "1",
-      }]
-
-      var list = bouquetAllChannels.concat(this.bouquets);
-      //list = list.filter(bouquet => bouquet.items.length > 0);
-      list = list.filter(function (bouquet) {
-        return bouquet.items.length > 0;
+      // Asignar los servicios filtrados por bouquet a la propiedad 'items' de cada bouquet
+      this.bouquets.forEach(function (bouquet, index) {
+          var filtered = self.services.filter(function (channel) {
+              return channel.bouquetIds.indexOf(bouquet.bouquetId) >= 0;
+          });
+          self.bouquets[index].items = filtered;
       });
 
-      //this.bouquets = this.bouquets.unshift(bouquetAllChannels);
-      // 6. Return boquets list
-      console.log(list);
+      // Eliminar el bouquet consolidado y retornar solo los bouquets con servicios
+      var list = this.bouquets.filter(function (bouquet) {
+          return bouquet.items.length > 0;
+      });
+
+      // Llamada al callback para retornar los bouquets con sus servicios
+      console.log(list)
       callback(list);
     },
 
