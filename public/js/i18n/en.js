@@ -6,22 +6,25 @@ I18n.translations.EN = {
   "welcome": "Welcome",
 
   "LoginSubscriberNameGuest": "Guest",
-  "LoginWelcome": "Login information", //loginDialog.textView.title
-  "LoginLoginButton": "Login", //loginDialog.button.login
-  "LoginLogoutButton": "Logout", //mainMenu.item.logout
-  "LoginRemember": "Remember", //loginDialog.checkBox.savePassword
-  "LoginUsername": "User ID", //loginDialog.editText.userId
+  "LoginTextWelcome": "Welcome",
+  "LoginTextFr": "Movies, series, sports, and much more!",
+  "LoginTextSg": "Sign in",
+  "LoginWelcome": "Login", //loginDialog.textView.title
+  "LoginLoginButton": "Sign in", //loginDialog.button.login
+  "LoginLogoutButton": "Sign out", //mainMenu.item.logout
+  "LoginRemember": "Save password", //loginDialog.checkBox.savePassword
+  "LoginUsername": "Username", //loginDialog.editText.userId
   "LoginPassword": "Password", //loginDialog.editText.password
-  "LoginTimeout": "Timeout", //CableViewAction.textView.timeoutTitle
-  "LoginTimeoutMessage": "A timeout did occurr. Make sure you are connected to the internet", //CableViewAction.textView.timeoutMessage
+  "LoginTimeout": "Timeout exceeded", //CableViewAction.textView.timeoutTitle
+  "LoginTimeoutMessage": "Make sure you are connected to the internet", //CableViewAction.textView.timeoutMessage
   "LoginOkButton": "Close", //CableViewAction.button.close
   "LoginFailure": "Failure", //CableViewAction.textView.failure
-  "LoginWrongLogin": "Wrong User ID or Password", //CableViewAction.textView.wrongUserNameOrPass
-  "LoginLogoutConfirm": "Are you sure you want to logout now?", //logoutConfirmation.message
-  "LoginLogoutTitle": "Log out", // logoutConfirmation.title
+  "LoginWrongLogin": "Incorrect username or password", //CableViewAction.textView.wrongUserNameOrPass
+  "LoginLogoutConfirm": "Are you sure you want to log out?", //logoutConfirmation.message
+  "LoginLogoutTitle": "Sign out", //logoutConfirmation.title
   "LoginLogoutCancelButton": "Cancel", //logoutConfirmation.negativeButton
-  "LoginLogoutButton": "Log out", //logoutConfirmation.positiveButton
-  "LoginRegisterTitle": "If you don’t have an account, register here",
+  "LoginLogoutButton": "Sign out", //logoutConfirmation.positiveButton
+  "LoginRegisterTitle": "If you don't have an account, register here",
   "RegisterButton": "Register", //Register.
   "TextRegister": "Scan the QR code to register:", //textRegister.
   "CloseButton": "Close", //Close

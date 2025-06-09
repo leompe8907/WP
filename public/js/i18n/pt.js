@@ -6,23 +6,26 @@ I18n.translations.PT = {
   "welcome": "Bem-vindo",
 
   "LoginSubscriberNameGuest": "Convidado",
-  "LoginWelcome": "Informações de login", //loginDialog.textView.title
+  "LoginTextWelcome": "Bem-vindos",
+  "LoginTextFr": "Filmes, séries, esportes e muito mais!",
+  "LoginTextSg": "Faça seu login",
+  "LoginWelcome": "Início de sessão", //loginDialog.textView.title
   "LoginLoginButton": "Iniciar sessão", //loginDialog.button.login
-  "LoginLogoutButton": "Sair", //mainMenu.item.logout
+  "LoginLogoutButton": "Encerrar sessão", //mainMenu.item.logout
   "LoginRemember": "Salvar senha", //loginDialog.checkBox.savePassword
   "LoginUsername": "Nome de usuário", //loginDialog.editText.userId
   "LoginPassword": "Senha", //loginDialog.editText.password
-  "LoginTimeout": "Tempo excedido", //CableViewAction.textView.timeoutTitle
-  "LoginTimeoutMessage": "Certifique-se de estar conectado à internet", //CableViewAction.textView.timeoutMessage
+  "LoginTimeout": "Tempo de espera excedido", //CableViewAction.textView.timeoutTitle
+  "LoginTimeoutMessage": "Certifique-se de que está conectado à internet", //CableViewAction.textView.timeoutMessage
   "LoginOkButton": "Fechar", //CableViewAction.button.close
   "LoginFailure": "Falha", //CableViewAction.textView.failure
   "LoginWrongLogin": "Nome de usuário ou senha incorretos", //CableViewAction.textView.wrongUserNameOrPass
-  "LoginLogoutConfirm": "Tem certeza de que deseja sair?", //logoutConfirmation.message
-  "LoginLogoutTitle": "Sair da conta", //logoutConfirmation.title
+  "LoginLogoutConfirm": "Tem certeza de que deseja encerrar a sessão?", //logoutConfirmation.message
+  "LoginLogoutTitle": "Encerrar sessão", //logoutConfirmation.title
   "LoginLogoutCancelButton": "Cancelar", //logoutConfirmation.negativeButton
-  "LoginLogoutButton": "Sair", //logoutConfirmation.positiveButton
-  "LoginRegisterTitle": "Se você não tem uma conta, registre-se aqui",
-  "RegisterButton": "Registrar", //Register.
+  "LoginLogoutButton": "Encerrar sessão", //logoutConfirmation.positiveButton
+  "LoginRegisterTitle": "Se não tem uma conta, registre-se aqui",
+  "RegisterButton": "Registrar-se", //Register.
   "TextRegister": "Escaneie o código QR para se registrar:", //textRegister.
   "CloseButton": "Fechar", //Close
 

@@ -5,8 +5,11 @@ I18n.translations.ES = {
   "button_test": "Keyboard scene",
   "welcome": "Bienvenido",
 
-  "LoginSubscriberNameGuest": "Guest",
-  "LoginWelcome": "inicio de sesión", //loginDialog.textView.title
+  "LoginSubscriberNameGuest": "Invitado",
+  "LoginTextWelcome": "Bienvenidos",
+  "LoginTextFr": "Películas, series, deportes y mucho más!",
+  "LoginTextSg": "Inicia sesión",
+  "LoginWelcome": "Inicio de sesión", //loginDialog.textView.title
   "LoginLoginButton": "Iniciar sesión", //loginDialog.button.login
   "LoginLogoutButton": "Cerrar sesión", //mainMenu.item.logout
   "LoginRemember": "Guardar contraseña", //loginDialog.checkBox.savePassword
@@ -21,9 +24,9 @@ I18n.translations.ES = {
   "LoginLogoutTitle": "Cerrar sesión", //logoutConfirmation.title
   "LoginLogoutCancelButton": "Cancelar", //logoutConfirmation.negativeButton
   "LoginLogoutButton": "Cerrar sesión", //logoutConfirmation.positiveButton
-  "LoginRegisterTitle": "Si no tienes cuenta regístrate aca",
+  "LoginRegisterTitle": "Si no tienes cuenta regístrate acá",
   "RegisterButton": "Regístrate", //Register.
-  "TextRegister":"Escanea el código QR para registrarte:",//textRegister.
+  "TextRegister": "Escanea el código QR para registrarte:", //textRegister.
   "CloseButton": "Cerrar", //Close
 
   "SettingsLicenseInstructions": "Aquí puede elegir cuáles de sus licencias deben activarse en este dispositivo. Para activar una licencia, haga clic en ella. Se le pedirá que ingrese el PIN de 4 dígitos para esa licencia.", //licenseListHeader.textView.help1
